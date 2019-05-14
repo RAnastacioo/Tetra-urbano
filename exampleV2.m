@@ -1,4 +1,4 @@
- clearvars;clc;close all;
+clearvars;clc;close all;
 
 SAMPLES = 512;
 API_KEY = 'AIzaSyDisRmwIXn8JXJpqTVUDcHa7M9LGsEcT2w';   % Read https://developers.google.com/maps/documentation/elevation/get-api-key
