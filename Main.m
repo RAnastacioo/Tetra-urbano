@@ -66,10 +66,11 @@ Ptx=1; %dB
 
 % Atenuação em espaço livre  [visgrid-->lineOfsight]
 LFS=NaN(size(dist));
-LFS(visgrid)=PL_free(f,dist(visgrid).*1000,Gtx,Grx);
+LFS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,maxElevation(1,3),elevation_map(visgrid),'URBAN');
+% LFS(visgrid)=PL_free(f,dist(visgrid).*1000,Gtx,Grx);
 
 % Atenuação com modelo para ~visgrid
-LFS(~visgrid)=PL_Hata_modify(f,dist(~visgrid).*1000,maxElevation(1,3),elevation_map(~visgrid),'URBAN');
+% LFS(~visgrid)=PL_Hata_modify(f,dist(~visgrid).*1000,maxElevation(1,3),elevation_map(~visgrid),'URBAN');
 % LFS(~visgrid)=PL_IEEE80216d_modify(f,dist(~visgrid).*1000,'B',maxElevation(1,3),elevation_map(~visgrid),'Okumura');
 
 %Prx
@@ -82,6 +83,20 @@ end
 
 %% color devision  
 signalColor=colorLegend(Prx_dBm);
+%% power image display
+% subplot(2,2,[3,4]);
+% imagesc(signalColor,[0 255]);
+
+
+%% SelectBaseStation 
+%find BS
+Prx_min=-90; %db
+
+
+
+
+
+
 %% Displays the data
 figure('Name','Elevation');
 subplot(1,2,1);
@@ -91,21 +106,11 @@ title('Elevation profile from Serra de Aire e Candeeiros');
 xlabel('Latitude (Âº)');
 ylabel('Longitude (Âº)');
 zlabel('Elevation (m)');
-scatter3(points(1,1),points(1,2),points(1,3),'filled','v','k','SizeData',200);
-% scatter3(points(2,1),points(2,2),points(2,3),'filled','SizeData',200);
+scatter3(points(1,1),points(1,2),points(1,3),'filled','v','r','SizeData',200);
+% scatter3(lng_map(bdsdad),lat_map(bdsdad),elevation_map(bdsdad),'filled','v','r','SizeData',60);
 hold off
 subplot(1,2,2);
 imshow('z_Legend.jpg');
-
-%% power image display
-% subplot(2,2,[3,4]);
-% imagesc(signalColor,[0 255]);
-
-
-%% SelectBaseStation 
-%find best Prx_dbm in det range with best elevation_map
-
-
 
 
 %% KML file
