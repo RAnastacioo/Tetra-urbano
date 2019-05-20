@@ -9,30 +9,13 @@ Coord2 = [41.032861, -8.382944];
 load(['backup_' num2str(SAMPLES)]);
 disp('Displaying Data');
 
-%% Max and Min Elevation Point
+%% Max Elevation Point
 [~,index] = max(elevation_map(:));
 maxElevation=[lng_map(index),lat_map(index),elevation_map(index)];
-% [~,index] = min(elevation_map(:));
-% minElevation=[lng_map(index),lat_map(index),elevation_map(index)];
 
 %% Points
 points = maxElevation;
 % points(2,:)= minElevation;
-
-%% dist between 2 points
-% distTerrestre=distance(points(1,2),points(1,1),points(2,2),points(2,1));
-% distTerrestre=deg2km(distTerrestre,'earth');
-% distLink=sqrt((max(points(:,3))-min(points(:,3)))^2+(distTerrestre*1000)^2)/1000;
-% fprintf('distTerrestre: %f\ndistLink: %f\n',distTerrestre,distLink);
-
-%% Line-of-sight visibility between two points in terrain
-% latlim = [min(lat_map(:)), max(lat_map(:))];
-% lonlim = [min(lng_map(:)), max(lng_map(:))];
-% rasterSize = size(elevation_map);
-% R = georefcells(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
-% [vis,visprofile,distance2points,h,lattrk,lontrk] = los2(elevation_map,R,points(1,2),points(1,1),points(2,2),points(2,1),10,10);
-% plot3(lontrk(visprofile),lattrk(visprofile),h(visprofile),'g.','markersize',20);
-% plot3(lontrk(~visprofile),lattrk(~visprofile),h(~visprofile),'r.','markersize',20);
 
 %% All Line-of-sight visibility points in terrain
  latlim = [min(lat_map(:)), max(lat_map(:))];
@@ -46,16 +29,7 @@ visgrid=logical(visgrid);
 %dist
 dist=deg2km(distance(points(1,2),points(1,1),lat_map,lng_map),'earth');
 disTerrestre=dist;
-dist=sqrt(abs((max(points(:,3))-min(dist))).^2+(dist.*1000).^2)/1000;
-
-%Cut Radius
-cutRadius=true;
-radius=6; %km
-mask4=ones(size(disTerrestre));
-if(cutRadius)
-mask4= disTerrestre <=radius;
-end
- 
+dist=sqrt(abs((points(1,3)-min(dist))).^2+(dist.*1000).^2)/1000;
 
 %% Atenuação em espaço livre  [visgrid-->lineOfsight]
 f= 400e6; %Hz
@@ -68,11 +42,6 @@ Ptx=50; %dBm 100w
 % Atenuação em espaço livre  [visgrid-->lineOfsight]
 LFS=NaN(size(dist));
 LFS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,points(1,3),elevation_map(visgrid),'URBAN');
-%LFS(visgrid)=PL_free(f,dist(visgrid).*1000,Gtx,Grx);
-
-% Atenuação com modelo para ~visgrid
-% LFS(~visgrid)=PL_Hata_modify(f,dist(~visgrid).*1000,maxElevation(1,3),elevation_map(~visgrid),'URBAN');
-% LFS(~visgrid)=PL_IEEE80216d_modify(f,dist(~visgrid).*1000,'B',maxElevation(1,3),elevation_map(~visgrid),'Okumura');
 
 %Prx
 Prx_dBm=Ptx+Gtx+Grx-LFS;
@@ -96,8 +65,14 @@ points(2,:)=[-8.41172240000000,41.0963930000000,394.334533700000];
 
 [visgrid2,~]=viewshed(elevation_map,R,points(2,2),points(2,1),30,1);
 visgrid2=logical(visgrid2);
+%intrecção pontos de visibilidade 
 Sub=NaN(size(visgrid2));
 Sub=and(visgrid,visgrid2);
+
+%dist
+dist=deg2km(distance(points(2,2),points(2,1),lat_map,lng_map),'earth');
+disTerrestre=dist;
+dist=sqrt(abs((points(2,3)-min(dist))).^2+(dist.*1000).^2)/1000;
 
 LFSBS2=NaN(size(LFS));
 LFSBS2(visgrid2)=PL_Hata_modify(f,dist(visgrid2).*1000,points(2,3),elevation_map(visgrid2),'URBAN');
@@ -125,10 +100,15 @@ points(3,:)=[-8.58700970000000,41.1077348000000,232.853225700000];
 
 [visgrid3,~]=viewshed(elevation_map,R,points(3,2),points(3,1),30,1);
 visgrid3=logical(visgrid3);
-Sub2=NaN(size(visgrid3));
+%intrecção pontos de visibilidade 
 Sub2=and(Sub,visgrid3);
 
 LFSBS3=NaN(size(LFS));
+%dist
+dist=deg2km(distance(points(3,2),points(3,1),lat_map,lng_map),'earth');
+disTerrestre=dist;
+dist=sqrt(abs((points(3,3)-min(dist))).^2+(dist.*1000).^2)/1000;
+
 LFSBS3(visgrid3)=PL_Hata_modify(f,dist(visgrid3).*1000,points(3,3),elevation_map(visgrid3),'URBAN');
 LFS(visgrid3)=PL_Hata_modify(f,dist(visgrid3).*1000,points(3,3),elevation_map(visgrid3),'URBAN');
 
@@ -176,13 +156,5 @@ imshow('z_Legend.jpg');
 
 
 %% KML file
-if(cutRadius)
-Prx_dBm_radius=NaN(size(dist));
-Prx_dBm_radius(mask4)=Prx_dBm(mask4);
-end
-
- AA_func(lat_map(1),lat_map(end),lng_map(1),lng_map(end),Prx_dBm,'Coverage_map');
- if(cutRadius)
- AA_func(lat_map(1),lat_map(end),lng_map(1),lng_map(end),Prx_dBm_radius,'Coverage_map_radius');
- end
-
+AA_func(lat_map(1),lat_map(end),lng_map(1),lng_map(end),Prx_dBm,'Coverage_map');
+ 
