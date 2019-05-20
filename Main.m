@@ -138,7 +138,7 @@ Prx_dBm=Ptx+Gtx+Grx-LFS;
 %% color devision  
 signalColor4=colorLegend(Prx_dBm);
 %% Displays the data
-figure('Name','BS1+BS2');
+figure('Name','BS1+BS2+BS3');
 subplot(1,2,1);
 mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor4);
 hold on
