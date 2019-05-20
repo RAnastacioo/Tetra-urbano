@@ -3,8 +3,8 @@ clearvars;clc;close all;
 SAMPLES = 512;
 API_KEY = 'AIzaSyDisRmwIXn8JXJpqTVUDcHa7M9LGsEcT2w';   % Read https://developers.google.com/maps/documentation/elevation/get-api-key
 
-Coord1 = [39.5440818,-8.8233585]; %pedreiras da minha terra
-Coord2 = [39.7540405,-8.8759987];
+Coord1 = [41.294517, -8.717167]; 
+Coord2 = [41.032861, -8.382944];
 
 load(['backup_' num2str(SAMPLES)]);
 disp('Displaying Data');
@@ -40,7 +40,7 @@ fprintf('distTerrestre: %f\ndistLink: %f\n',distTerrestre,distLink);
  rasterSize = size(elevation_map);
  R = georefcells(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
-[visgrid,~]=viewshed_nova(elevation_map,R,points(1,2),points(1,1),30,1);
+[visgrid,~]=viewshed(elevation_map,R,points(1,2),points(1,1),30,1);
 visgrid=logical(visgrid);
 
 %dist
@@ -57,17 +57,17 @@ mask4= disTerrestre <=radius;
 end
  
 %% Atenuação em espaço livre  [visgrid-->lineOfsight]
-f= 380e6; %Hz
+f= 400e6; %Hz
 c=3e8; %m/s
 lambda=c/f;%m
 Gtx=1;
 Grx=1; % dB
-Ptx=1; %dB
+Ptx=50; %dBm 100w
 
 % Atenuação em espaço livre  [visgrid-->lineOfsight]
 LFS=NaN(size(dist));
 LFS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,maxElevation(1,3),elevation_map(visgrid),'URBAN');
-% LFS(visgrid)=PL_free(f,dist(visgrid).*1000,Gtx,Grx);
+%LFS(visgrid)=PL_free(f,dist(visgrid).*1000,Gtx,Grx);
 
 % Atenuação com modelo para ~visgrid
 % LFS(~visgrid)=PL_Hata_modify(f,dist(~visgrid).*1000,maxElevation(1,3),elevation_map(~visgrid),'URBAN');
