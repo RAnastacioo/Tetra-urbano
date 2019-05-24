@@ -1,4 +1,11 @@
 clearvars;clc;close all;
+%%Variaveis
+f= 400e6; %Hz
+c=3e8; %m/s
+lambda=c/f;%m
+Gtx=1;
+Grx=1; % dB
+Ptx=50; %dBm 100w
 
 SAMPLES = 512;
 API_KEY = 'AIzaSyDisRmwIXn8JXJpqTVUDcHa7M9LGsEcT2w';   % Read https://developers.google.com/maps/documentation/elevation/get-api-key
@@ -9,12 +16,14 @@ Coord2 = [41.032861, -8.382944];
 load(['backup_' num2str(SAMPLES)]);
 disp('Displaying Data');
 
-%% Max Elevation Point
+%%------- Max Elevation Point
 [~,index] = max(elevation_map(:));
 maxElevation=[lng_map(index),lat_map(index),elevation_map(index)];
 
-%% Points
+%%------- Points
 points = maxElevation;
+points(2,:)=[-8.41172240000000,41.0963930000000,394.334533700000];
+points(3,:)=[-8.58700970000000,41.1077348000000,232.853225700000];
 % points(2,:)= minElevation;
 
 %% All Line-of-sight visibility points in terrain
@@ -23,6 +32,8 @@ points = maxElevation;
  rasterSize = size(elevation_map);
  R = georefcells(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
+ 
+ 
 [visgrid,~]=viewshed(elevation_map,R,points(1,2),points(1,1),30,1);
 visgrid=logical(visgrid);
 
@@ -32,12 +43,6 @@ disTerrestre=dist;
 dist=sqrt(abs((points(1,3)-min(dist))).^2+(dist.*1000).^2)/1000;
 
 %% Atenuação em espaço livre  [visgrid-->lineOfsight]
-f= 400e6; %Hz
-c=3e8; %m/s
-lambda=c/f;%m
-Gtx=1;
-Grx=1; % dB
-Ptx=50; %dBm 100w
 
 % Atenuação em espaço livre  [visgrid-->lineOfsight]
 LFS=NaN(size(dist));
@@ -61,7 +66,6 @@ hold off
 
 
 %% BS2 
-points(2,:)=[-8.41172240000000,41.0963930000000,394.334533700000];
 
 [visgrid2,~]=viewshed(elevation_map,R,points(2,2),points(2,1),30,1);
 visgrid2=logical(visgrid2);
@@ -96,8 +100,6 @@ hold off
 
 
 %% BS3
-points(3,:)=[-8.58700970000000,41.1077348000000,232.853225700000];
-
 [visgrid3,~]=viewshed(elevation_map,R,points(3,2),points(3,1),30,1);
 visgrid3=logical(visgrid3);
 %intrecção pontos de visibilidade 
@@ -155,7 +157,50 @@ hold off
 subplot(1,2,2);
 imshow('z_Legend.jpg');
 
-
+Antena('ola','lll',points(1,1),points(1,2),points(1,3),elevation_map,lat_map,lng_map,R)
 %% KML file
 AA_func(lat_map(1),lat_map(end),lng_map(1),lng_map(end),Prx_dBm,'Coverage_map');
  
+function [] = Antena(FigName,Title,PointLat,PointLong,PointAlt,elevation_map,lat_map,lng_map,R)
+%%Variaveis
+f= 400e6; %Hz
+c=3e8; %m/s
+lambda=c/f;%m
+Gtx=1;
+Grx=1; % dB
+Ptx=50; %dBm 100w
+
+[visgrid3,~]=viewshed(elevation_map,R,PointLong,PointLat,30,1);
+visgrid3=logical(visgrid3);
+%intrecção pontos de visibilidade 
+%Sub2=and(Sub,visgrid3);
+
+
+%dist
+dist=deg2km(distance(PointLat,PointLong,lat_map,lng_map),'earth');
+LFS=NaN(size(dist));
+disTerrestre=dist;
+dist=sqrt(abs((PointAlt-min(dist))).^2+(dist.*1000).^2)/1000;
+
+LFSBS3(visgrid3)=PL_Hata_modify(f,dist(visgrid3).*1000,PointAlt,elevation_map(visgrid3),'URBAN');
+LFS(visgrid3)=PL_Hata_modify(f,dist(visgrid3).*1000,PointAlt,elevation_map(visgrid3),'URBAN');
+
+%Prx
+Prx_dBm3=Ptx+Gtx+Grx-LFSBS3;
+
+% color devision  
+signalColor3=colorLegend(Prx_dBm3);
+
+figure('Name',FigName);
+subplot(1,2,1);
+mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor3);
+hold on
+title(Title);
+xlabel('Latitude (Âº)');
+ylabel('Longitude (Âº)');
+zlabel('Elevation (m)');
+scatter3(PointLat,PointLong,PointAlt,'filled','v','r','SizeData',200);
+subplot(1,2,2);
+imshow('z_Legend.jpg');
+hold off
+end
