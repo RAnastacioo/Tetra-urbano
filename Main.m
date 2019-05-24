@@ -44,7 +44,7 @@ Prx_dBm(visgridBS3)=Prx_dBmBS3(visgridBS3);
 %% intrecção pontos de visibilidade 
 Sub=NaN(size(visgridBS1));
 Sub=and(visgridBS1,visgridBS2);
-Sub=and(Sub,visgridBS3);
+Sub2=and(Sub,visgridBS3);
 
 %% color devision  
 signalColor=colorLegend(Prx_dBm);
@@ -61,6 +61,7 @@ scatter3(points(1,1),points(1,2),points(1,3),'filled','v','r','SizeData',200);
 scatter3(points(2,1),points(2,2),points(2,3),'filled','v','r','SizeData',200);
 scatter3(points(3,1),points(3,2),points(3,3),'filled','v','r','SizeData',200);
 plot3(lng_map(Sub),lat_map(Sub),elevation_map(Sub),'w.','markersize',5);
+plot3(lng_map(Sub2),lat_map(Sub2),elevation_map(Sub2),'w.','markersize',5);
 hold off
 subplot(1,2,2);
 imshow('z_Legend.jpg');
