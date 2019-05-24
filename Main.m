@@ -67,8 +67,7 @@ subplot(1,2,2);
 imshow('z_Legend.jpg');
 
 %% KML file
-AA_func(lat_map(1),lat_map(end),lng_map(1),lng_map(end),Prx_dBm,'Coverage_map');
+AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
  
 %% power image display
 % imagesc(signalColor,[0 255]);
-
