@@ -26,6 +26,8 @@ points(3,:)=[-8.58700970000000,41.1077348000000,232.853225700000];
  latlim = [min(lat_map(:)), max(lat_map(:))];
  lonlim = [min(lng_map(:)), max(lng_map(:))];
  rasterSize = size(elevation_map);
+ %GEOREFCELLS Reference raster cells to geographic coordinates
+
  R = georefcells(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BS1
@@ -44,14 +46,15 @@ Prx_dBm(visgridBS3)=Prx_dBmBS3(visgridBS3);
 %% intrecção pontos de visibilidade 
 Sub=NaN(size(visgridBS1));
 Sub=and(visgridBS1,visgridBS2);
-Sub2=and(Sub,visgridBS3);
-
+Sub2=and(visgridBS1,visgridBS3);
+Sub3=and(visgridBS2,visgridBS3);
 %% color devision  
 signalColor=colorLegend(Prx_dBm);
+% mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
 %% Displays the data
 figure('Name','BS1+BS2+BS3');
 subplot(1,2,1);
-mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
+mesh(lng_map(1,:), lat_map(:,1), elevation_map); 
 hold on
 title('Coverage Map - BS1 & BS2 & BS3');
 xlabel('Latitude (Âº)');
@@ -62,6 +65,7 @@ scatter3(points(2,1),points(2,2),points(2,3),'filled','v','r','SizeData',200);
 scatter3(points(3,1),points(3,2),points(3,3),'filled','v','r','SizeData',200);
 plot3(lng_map(Sub),lat_map(Sub),elevation_map(Sub),'w.','markersize',5);
 plot3(lng_map(Sub2),lat_map(Sub2),elevation_map(Sub2),'w.','markersize',5);
+plot3(lng_map(Sub3),lat_map(Sub3),elevation_map(Sub3),'w.','markersize',5);
 hold off
 subplot(1,2,2);
 imshow('z_Legend.jpg');
