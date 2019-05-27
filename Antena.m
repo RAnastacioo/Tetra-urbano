@@ -14,7 +14,7 @@ visgrid=logical(visgrid);
 
 %dist
 dist=deg2km(distance(PointLat,PointLong,lat_map,lng_map),'earth');
-% disTerrestre=dist;
+%disTerrestre=dist;
 dist=sqrt(abs((PointAlt-dist)).^2+(dist.*1000).^2)/1000;
 
 %HATA
