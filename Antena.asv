@@ -30,7 +30,7 @@ elev=round(elev);
 LFSssss=NaN(size(dist));
 Index=ismember(az,Antena400MhzGain13.Hor_Angle) & ismember(elev,Antena400MhzGain13.Vert_Angle);
 Index1=ismember(Antena400MhzGain13.Hor_Angle,az) & ismember(Antena400MhzGain13.Vert_Angle,elev);
-
+LFSssss(Index(:))=Antena400MhzGain13.Attenuation(Index1);
 
 
 % figure('Name','Atenuação');
