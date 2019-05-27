@@ -28,7 +28,6 @@ points(3,:)=[-8.58700970000000,41.1077348000000,232.853225700000];
  lonlim = [min(lng_map(:)), max(lng_map(:))];
  rasterSize = size(elevation_map);
  %GEOREFCELLS Reference raster cells to geographic coordinates
-
  R = georefcells(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BS1
