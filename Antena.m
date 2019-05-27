@@ -6,9 +6,10 @@ lambda=c/f;%m
 Gtx=1;
 Grx=1; % dB
 Ptx=50; %dBm 100w
-load('Antena400MhzGain13.mat')
+altAntena=30; %metros
+load('Antena400MhzGain13.mat');
 
-[visgrid,~]=viewshed(elevation_map,R,PointLat,PointLong,30,1);
+[visgrid,~]=viewshed(elevation_map,R,PointLat,PointLong,altAntena,1);
 visgrid=logical(visgrid);
 
 %dist
@@ -21,10 +22,21 @@ LFS=NaN(size(dist));
 LFS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,PointAlt,elevation_map(visgrid),'URBAN');
 
 %Angle azimuth(lat1,lon1,lat2,lon2)
-% angle=NaN(size(LFS));
-% angle=azimuth(PointLat,PointLong,lat_map,lng_map);
 %wgs84Ellipsoid;
-[az,elev,~] = geodetic2aer(PointLat,PointLong,PointAlt,lat_map,lng_map,elevation_map,wgs84Ellipsoid);
+[az,elev,~] = geodetic2aer(lat_map,lng_map,elevation_map,PointLat,PointLong,(PointAlt+altAntena),wgs84Ellipsoid);
+
+
+% figure('Name','Atenuação');
+% plot3(Antena400MhzGain13.Hor_Angle,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Attenuation);
+
+%ang.hotizontal
+% figure;
+% mesh(lng_map(1,:), lat_map(:,1), az);
+
+%ang.verical
+% figure;
+% mesh(lng_map(1,:), lat_map(:,1), elev);
+
 
 %Prx
 Prx_dBm=Ptx+Gtx+Grx-LFS;
