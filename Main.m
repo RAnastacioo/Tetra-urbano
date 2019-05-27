@@ -1,5 +1,5 @@
 clearvars;clc;close all;
-%%Variaveis
+%% Variaveis
 f= 400e6; %Hz
 c=3e8; %m/s
 lambda=c/f;%m
@@ -54,7 +54,7 @@ signalColor=colorLegend(Prx_dBm);
 %% Displays the data
 figure('Name','BS1+BS2+BS3');
 subplot(1,2,1);
-mesh(lng_map(1,:), lat_map(:,1), elevation_map); 
+mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor); 
 hold on
 title('Coverage Map - BS1 & BS2 & BS3');
 xlabel('Latitude (º)');
