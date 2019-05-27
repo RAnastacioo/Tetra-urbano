@@ -6,6 +6,7 @@ lambda=c/f;%m
 Gtx=1;
 Grx=1; % dB
 Ptx=50; %dBm 100w
+load('Antena400MhzGain13.mat')
 
 [visgrid,~]=viewshed(elevation_map,R,PointLat,PointLong,30,1);
 visgrid=logical(visgrid);
@@ -18,6 +19,12 @@ dist=sqrt(abs((PointAlt-dist)).^2+(dist.*1000).^2)/1000;
 %HATA
 LFS=NaN(size(dist));
 LFS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,PointAlt,elevation_map(visgrid),'URBAN');
+
+%Angle azimuth(lat1,lon1,lat2,lon2)
+% angle=NaN(size(LFS));
+% angle=azimuth(PointLat,PointLong,lat_map,lng_map);
+%wgs84Ellipsoid;
+[az,elev,~] = geodetic2aer(PointLat,PointLong,PointAlt,lat_map,lng_map,elevation_map,wgs84Ellipsoid);
 
 %Prx
 Prx_dBm=Ptx+Gtx+Grx-LFS;
