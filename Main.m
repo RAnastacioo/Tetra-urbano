@@ -1,15 +1,6 @@
 clearvars;clc;close all;
-%% Variaveis
-f= 400e6; %Hz
-c=3e8; %m/s
-lambda=c/f;%m
-Gtx=1;
-Grx=1; % dB
-Ptx=50; %dBm 100w
 
 SAMPLES = 512;
-
-%
 % load('backup_Lisboa_512.mat')
 load('backup_Porto_512.mat')
 load('Antena400MhzGain13.mat');
@@ -17,6 +8,7 @@ disp('Displaying Data');
 
 %%------- Max Elevation Point
 [~,index] = max(elevation_map(:));
+% maxElevation=[lng_map(256,256),lat_map(256,256),elevation_map(256,256)];
 maxElevation=[lng_map(index),lat_map(index),elevation_map(index)];
 
 %%------- Points
@@ -30,6 +22,9 @@ points(3,:)=[-8.58700970000000,41.1077348000000,232.853225700000];
  rasterSize = size(elevation_map);
  %GEOREFCELLS Reference raster cells to geographic coordinates
  R = georefcells(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
+ 
+%% BBC
+% [visgrid] = bestBsCoverage(elevation_map,lat_map,lng_map,R);
 
 %% BS1
 [Prx_dBmBS1,visgridBS1]=Antena('BS1','Coverage Map - BS1',points(1,1),points(1,2),points(1,3),elevation_map,lat_map,lng_map,R);
@@ -39,13 +34,13 @@ points(3,:)=[-8.58700970000000,41.1077348000000,232.853225700000];
 [Prx_dBmBS3,visgridBS3]=Antena('BS3','Coverage Map - BS3',points(3,1),points(3,2),points(3,3),elevation_map,lat_map,lng_map,R);
 
 %% PRX
-Prx_dBm=NaN(SAMPLES,SAMPLES);
+%Prx_dBm=NaN(SAMPLES,SAMPLES);
 Prx_dBm=Prx_dBmBS1;
 Prx_dBm(visgridBS2)=Prx_dBmBS2(visgridBS2);
 Prx_dBm(visgridBS3)=Prx_dBmBS3(visgridBS3);
 
 %% intrecção pontos de visibilidade 
-Sub=NaN(size(visgridBS1));
+%Sub=NaN(size(visgridBS1));
 Sub=and(visgridBS1,visgridBS2);
 Sub2=and(visgridBS1,visgridBS3);
 Sub3=and(visgridBS2,visgridBS3);
@@ -72,9 +67,10 @@ subplot(1,2,2);
 imshow('z_Legend.jpg');
 
 
-%%Antenna Patern Atenuação 3d
+%% Antenna Patern Atenuação 3d
 load('Antena400MhzGain13.mat');
-figure('Name','Antenna Patern Atenuação 3d');patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle)
+figure('Name','Antenna Patern Atenuação 3d');
+patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle);
 
 %% KML file
 AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');

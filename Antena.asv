@@ -1,11 +1,12 @@
 function [Prx_dBm,visgrid] = Antena(FigName,Title,PointLong,PointLat,PointAlt,elevation_map,lat_map,lng_map,R)
 %%Variaveis
-f= 400e6; %Hz
+f= 2100e6; %Hz
 % c=3e8; %m/s
 % lambda=c/f;%m
 Gtx=1; %db
 Grx=1; % dB
-Ptx = 10*log10(100/1e-3); % 100w
+Ptx=50; %dBm 100w
+y = 10*log10(100)	
 altAntena=30; %metros
 load('Antena400MhzGain13.mat');
 
