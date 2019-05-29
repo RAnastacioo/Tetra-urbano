@@ -8,9 +8,10 @@ Grx=1; % dB
 Ptx=50; %dBm 100w
 
 SAMPLES = 512;
-API_KEY = 'AIzaSyDisRmwIXn8JXJpqTVUDcHa7M9LGsEcT2w';   % Read https://developers.google.com/maps/documentation/elevation/get-api-key
 
-load(['backup_' num2str(SAMPLES)]);
+%
+% load('backup_Lisboa_512.mat')
+load('backup_Porto_512.mat')
 load('Antena400MhzGain13.mat');
 disp('Displaying Data');
 
@@ -69,6 +70,11 @@ plot3(lng_map(Sub3),lat_map(Sub3),elevation_map(Sub3),'w.','markersize',5);
 hold off
 subplot(1,2,2);
 imshow('z_Legend.jpg');
+
+
+%%Antenna Patern Atenuação 3d
+load('Antena400MhzGain13.mat');
+figure('Name','Antenna Patern Atenuação 3d');patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle)
 
 %% KML file
 AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
