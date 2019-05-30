@@ -17,18 +17,18 @@ points(2,:)=[-8.41172240000000,41.0963930000000,394.334533700000];
 points(3,:)=[-8.58700970000000,41.1077348000000,232.853225700000];
 
 %% All Line-of-sight visibility points in terrain
- latlim = [min(lat_map(:)), max(lat_map(:))];
- lonlim = [min(lng_map(:)), max(lng_map(:))];
- rasterSize = size(elevation_map);
- %GEOREFCELLS Reference raster cells to geographic coordinates
- R = georefcells(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
- 
+latlim = [min(lat_map(:)), max(lat_map(:))];
+lonlim = [min(lng_map(:)), max(lng_map(:))];
+rasterSize = size(elevation_map);
+%GEOREFCELLS Reference raster cells to geographic coordinates
+R = georefcells(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
+
 %% BBC
 % [visgrid] = bestBsCoverage(elevation_map,lat_map,lng_map,R);
 
 %% BS1
 [Prx_dBmBS1,visgridBS1]=Antena('BS1','Coverage Map - BS1',points(1,1),points(1,2),points(1,3),elevation_map,lat_map,lng_map,R);
-%% BS2 
+%% BS2
 [Prx_dBmBS2,visgridBS2]=Antena('BS2','Coverage Map - BS2',points(2,1),points(2,2),points(2,3),elevation_map,lat_map,lng_map,R);
 %% BS3
 [Prx_dBmBS3,visgridBS3]=Antena('BS3','Coverage Map - BS3',points(3,1),points(3,2),points(3,3),elevation_map,lat_map,lng_map,R);
@@ -39,18 +39,18 @@ Prx_dBm=Prx_dBmBS1;
 Prx_dBm(visgridBS2)=Prx_dBmBS2(visgridBS2);
 Prx_dBm(visgridBS3)=Prx_dBmBS3(visgridBS3);
 
-%% intrecção pontos de visibilidade 
+%% intrecção pontos de visibilidade
 %Sub=NaN(size(visgridBS1));
 Sub=and(visgridBS1,visgridBS2);
 Sub2=and(visgridBS1,visgridBS3);
 Sub3=and(visgridBS2,visgridBS3);
-%% color devision  
+%% color devision
 signalColor=colorLegend(Prx_dBm);
 % mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
 %% Displays the data
 figure('Name','BS1+BS2+BS3');
 subplot(1,2,1);
-mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor); 
+mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
 hold on
 title('Coverage Map - BS1 & BS2 & BS3');
 xlabel('Latitude (Âº)');
@@ -74,6 +74,6 @@ patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Anten
 
 %% KML file
 AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
- 
+
 %% power image display
 % imagesc(signalColor,[0 255]);

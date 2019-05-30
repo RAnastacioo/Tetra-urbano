@@ -1,12 +1,11 @@
 function [Prx_dBm,visgrid] = Antena(FigName,Title,PointLong,PointLat,PointAlt,elevation_map,lat_map,lng_map,R)
 %%Variaveis
-f= 2100e6; %Hz
+f= 400e6; %Hz
 % c=3e8; %m/s
 % lambda=c/f;%m
 Gtx=1; %db
 Grx=1; % dB
-Ptx=50; %dBm 100w
-y = 10*log10(100)	
+Ptx = 10*log10(100/1e-3); % 100w
 altAntena=30; %metros
 load('Antena400MhzGain13.mat');
 
@@ -25,7 +24,6 @@ LFS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,PointAlt,elevation_map(visgrid
 
 %% 3D pattern antena
 %Angle azimuth(lat1,lon1,lat2,lon2)
-%wgs84Ellipsoid;
 [az,elev,~] = geodetic2aer(lat_map,lng_map,elevation_map,PointLat,PointLong,(PointAlt+altAntena),wgs84Ellipsoid);
 az1 = mod(round(az), 359);
 elev1 = round(-elev + 90);
