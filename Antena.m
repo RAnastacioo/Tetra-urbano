@@ -24,7 +24,6 @@ LFS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,PointAlt,elevation_map(visgrid
 
 %% 3D pattern antena
 %Angle azimuth(lat1,lon1,lat2,lon2)
-%wgs84Ellipsoid;
 [az,elev,~] = geodetic2aer(lat_map,lng_map,elevation_map,PointLat,PointLong,(PointAlt+altAntena),wgs84Ellipsoid);
 az1 = mod(round(az), 359);
 elev1 = round(-elev + 90);
