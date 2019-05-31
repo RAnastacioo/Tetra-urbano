@@ -1,12 +1,13 @@
-function bestBsCoverage(elevation_map,lat_map,lng_map,R)
+function BS1=bestBsCoverage(elevation_map,lat_map,lng_map,R)
 altAntena=30; %metros
-passo=300;
+passo=200;
 tic
 i=1:passo:size(lat_map(:));
-% mesh(lng_map(1,:), lat_map(:,1), elevation_map);
-% hold on
-% plot3(lng_map(i),lat_map(i),elevation_map(i),'r.','markersize',10);
-% hold off
+figure;
+mesh(lng_map(1,:), lat_map(:,1), elevation_map);
+hold on
+plot3(lng_map(i),lat_map(i),elevation_map(i),'r.','markersize',10);
+hold off
 
 %% visgrid(:,:,indx)
 try
@@ -26,5 +27,12 @@ catch
     fprintf('Duração real: %s \n',ss);
     save(['backup_vigrid_passo_' num2str(passo)],'visgrid');
 end
+
+%% Best BS1
+numberOnes(:,1)=sum(sum(visgrid(:,:,:)));
+[~,idx]=max(numberOnes);
+idx1=i(idx);
+BS1=[lng_map(idx1),lat_map(idx1),elevation_map(idx1)];
+
 
 end

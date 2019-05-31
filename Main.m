@@ -14,14 +14,14 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BBC
-bestBsCoverage(elevation_map,lat_map,lng_map,R);
+BS1=bestBsCoverage(elevation_map,lat_map,lng_map,R);
 
 %%------- Max Elevation Point
 [~,index] = max(elevation_map(:));
 maxElevation=[lng_map(index),lat_map(index),elevation_map(index)];
 %%------- Points
- points = maxElevation;
-% points = [-7.921640300000000,41.292964000000000,1.190174926800000e+03];
+% points = maxElevation;
+points = BS1;
 points(2,:)=[-8.031364700000000,41.194099000000000,9.509163818000000e+02];
 points(3,:)=[-8.236043900000000,41.187896000000000,5.677875366000000e+02];
 %% BS1
