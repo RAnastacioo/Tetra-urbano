@@ -67,7 +67,7 @@ title(Title);
 xlabel('Latitude (º)');
 ylabel('Longitude (º)');
 zlabel('Elevation (m)');
-scatter3(PointLong,PointLat,PointAlt,'filled','v','r','SizeData',200);
+scatter3(PointLong,PointLat,PointAlt+altAntena,'filled','v','m','SizeData',200);
 % subplot(1,2,2);
 % imshow('z_Legend.jpg');
 hold off
