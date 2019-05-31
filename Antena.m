@@ -10,8 +10,7 @@ altAntena=30; %metros
 load('Antena400MhzGain13.mat');
 
 %% LOS
-[visgrid,~]=viewshed(elevation_map,R,PointLat,PointLong,altAntena,1);
-visgrid=logical(visgrid);
+visgrid=logical(viewshed(elevation_map,R,PointLat,PointLong,altAntena,1));
 
 %% dist
 dist=deg2km(distance(PointLat,PointLong,lat_map,lng_map),'earth');
@@ -21,6 +20,8 @@ dist=sqrt(abs((PointAlt-dist)).^2+(dist.*1000).^2)/1000;
 %% HATA "LFS"
 LFS=NaN(size(dist));
 LFS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,PointAlt,elevation_map(visgrid),'URBAN');
+% LFS=PL_Hata_modify(f,dist.*1000,PointAlt,elevation_map,'URBAN');
+
 
 %% 3D pattern antena
 %Angle azimuth(lat1,lon1,lat2,lon2)
@@ -58,7 +59,8 @@ Prx_dBm=Ptx+antennaAttenuation+Gtx+Grx-LFS;
 %% color devision | Plot
 signalColor=colorLegend(Prx_dBm);
 figure('Name',FigName);
-subplot(1,2,1);
+% subplot(1,2,1);
+axis tight
 mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
 hold on
 title(Title);
@@ -66,8 +68,8 @@ xlabel('Latitude (º)');
 ylabel('Longitude (º)');
 zlabel('Elevation (m)');
 scatter3(PointLong,PointLat,PointAlt,'filled','v','r','SizeData',200);
-subplot(1,2,2);
-imshow('z_Legend.jpg');
+% subplot(1,2,2);
+% imshow('z_Legend.jpg');
 hold off
 end
 

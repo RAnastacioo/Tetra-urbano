@@ -7,10 +7,10 @@
               <href>Coverage_map.png</href>
 		</Icon>
             <LatLonBox>
-               <north>41.2945</north>
-               <south>41.0329</south>
-               <east>-8.7172</east>
-               <west>-8.3829</west>
+               <north>41.3329</north>
+               <south>41.1348</south>
+               <east>-8.4523</east>
+               <west>-7.9132</west>
                <rotation>0.0</rotation>
             </LatLonBox>
        </GroundOverlay>
