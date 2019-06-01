@@ -1,4 +1,7 @@
-function [Prx_dBm,visgrid] = Antena(FigName,Title,PointLong,PointLat,PointAlt,elevation_map,lat_map,lng_map,R)
+function [Prx_dBm,visgrid] = Antena(FigName,Title,BSpoint,elevation_map,lat_map,lng_map,R)
+PointLong=BSpoint(1,1);
+PointLat=BSpoint(1,2);
+PointAlt=BSpoint(1,3);
 %%Variaveis
 f= 400e6; %Hz
 % c=3e8; %m/s
