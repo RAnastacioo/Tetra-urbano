@@ -2,7 +2,7 @@ clearvars;clc;close all;
 SAMPLES = 512;
 alturaAntena=30;
 % load('backup_Lisboa_512.mat')
- load('backup_Porto_512.mat')
+load('backup_Porto_512.mat')
 % load('backup_512_new.mat')
 % load('Antena400MhzGain13.mat');
 disp('Displaying Data');
@@ -14,21 +14,16 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BBC
-[BS1,BS2,BS3,BS4]=bestBsCoverage(elevation_map,lat_map,lng_map,R);
-%------- Points
-% points = maxElevation;
-points = BS1;
-points(2,:)=BS2;
-points(3,:)=BS3;
-points(4,:)=BS4;
+[BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R);
+
 %% BS1
-[Prx_dBmBS1,visgridBS1]=Antena('BS1','Coverage Map - BS1',points(1,1),points(1,2),points(1,3),elevation_map,lat_map,lng_map,R);
+[Prx_dBmBS1,visgridBS1]=Antena('BS1','Coverage Map - BS1',BS.BS1,elevation_map,lat_map,lng_map,R);
 %% BS2
-[Prx_dBmBS2,visgridBS2]=Antena('BS2','Coverage Map - BS2',points(2,1),points(2,2),points(2,3),elevation_map,lat_map,lng_map,R);
+[Prx_dBmBS2,visgridBS2]=Antena('BS2','Coverage Map - BS2',BS.BS2,elevation_map,lat_map,lng_map,R);
 %% BS3
-[Prx_dBmBS3,visgridBS3]=Antena('BS3','Coverage Map - BS3',points(3,1),points(3,2),points(3,3),elevation_map,lat_map,lng_map,R);
+[Prx_dBmBS3,visgridBS3]=Antena('BS3','Coverage Map - BS3',BS.BS3,elevation_map,lat_map,lng_map,R);
 %% BS4
-[Prx_dBmBS4,visgridBS4]=Antena('BS4','Coverage Map - BS4',points(4,1),points(4,2),points(4,3),elevation_map,lat_map,lng_map,R);
+[Prx_dBmBS4,visgridBS4]=Antena('BS4','Coverage Map - BS4',BS.BS4,elevation_map,lat_map,lng_map,R);
 
 %% PRX
 %Prx_dBm=NaN(SAMPLES,SAMPLES);
@@ -68,10 +63,10 @@ title('Coverage Map - BS1 & BS2 & BS3 & BS4');
 xlabel('Latitude (º)');
 ylabel('Longitude (º)');
 zlabel('Elevation (m)');
-scatter3(points(1,1),points(1,2),points(1,3)+alturaAntena,'filled','v','m','SizeData',200);
-scatter3(points(2,1),points(2,2),points(2,3)+alturaAntena,'filled','v','m','SizeData',200);
-scatter3(points(3,1),points(3,2),points(3,3)+alturaAntena,'filled','v','m','SizeData',200);
-scatter3(points(4,1),points(4,2),points(4,3)+alturaAntena,'filled','v','m','SizeData',200);
+scatter3(BS.BS1(1,1),BS.BS1(1,2),BS.BS1(1,3)+alturaAntena,'filled','v','m','SizeData',200);
+scatter3(BS.BS2(1,1),BS.BS2(1,2),BS.BS3(1,3)+alturaAntena,'filled','v','m','SizeData',200);
+scatter3(BS.BS3(1,1),BS.BS3(1,2),BS.BS3(1,3)+alturaAntena,'filled','v','m','SizeData',200);
+scatter3(BS.BS4(1,1),BS.BS4(1,2),BS.BS4(1,3)+alturaAntena,'filled','v','m','SizeData',200);
 plot3(lng_map(Sub2),lat_map(Sub2),elevation_map(Sub2),'w.','markersize',5);
 plot3(lng_map(Sub3),lat_map(Sub3),elevation_map(Sub3),'w.','markersize',5);
 plot3(lng_map(Sub4),lat_map(Sub4),elevation_map(Sub4),'w.','markersize',5);
@@ -92,4 +87,6 @@ AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),
 %% power image display
 % imagesc(signalColor,[0 255]);
 
-
+tic
+pa=1:1:10000000;
+toc
