@@ -1,9 +1,9 @@
 clearvars;clc;close all;
 SAMPLES = 512;
 alturaAntena=30;
-% load('backup_Lisboa_512.mat')
+%  load('backup_Lisboa_512.mat')
 load('backup_Porto_512.mat')
-% load('backup_512_new.mat')
+%  load('backup_512_new.mat')
 % load('Antena400MhzGain13.mat');
 disp('Displaying Data');
 %% All Line-of-sight visibility points in terrain
@@ -14,7 +14,14 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BBC
-[BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R);
+coverageTarget=95;
+[BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget);
+
+Prx_dBmBS=NaN(size(lat_map));
+visgridBS=NaN(size(lat_map));
+for i=1:length (BS)
+    [Prx_dBmBS(:,:,i),visgridBS(:,:,i)]=Antena(['BS',num2str(i)],['Coverage Map BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R);
+end
 
 %% BS1
 [Prx_dBmBS1,visgridBS1]=Antena('BS1','Coverage Map - BS1',BS.BS1,elevation_map,lat_map,lng_map,R);
@@ -27,10 +34,11 @@ R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% PRX
 %Prx_dBm=NaN(SAMPLES,SAMPLES);
-Prx_dBm=Prx_dBmBS1;
+Prx_dBm=Prx_dBmBS(:,:,1);
 Prx_dBm(visgridBS2)=Prx_dBmBS2(visgridBS2);
 Prx_dBm(visgridBS3)=Prx_dBmBS3(visgridBS3);
 Prx_dBm(visgridBS4)=Prx_dBmBS4(visgridBS4);
+
 
 %% intrecção pontos de visibilidade
 %Sub=NaN(size(visgridBS1));
@@ -41,7 +49,7 @@ Sub4=and(visgridBS2,visgridBS4);
 Sub5=and(visgridBS4,visgridBS4);
 Sub6=and(visgridBS1,visgridBS4);
 
-%% Coverage Area 
+%% Coverage Area
 orr=or(visgridBS1,visgridBS2);
 orr=or(orr,visgridBS3);
 orr=or(orr,visgridBS4);
@@ -86,7 +94,3 @@ AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),
 
 %% power image display
 % imagesc(signalColor,[0 255]);
-
-tic
-pa=1:1:10000000;
-toc
