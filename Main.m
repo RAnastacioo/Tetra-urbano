@@ -34,7 +34,9 @@ Sub=NaN(size(visgridBS(:,:,1)));
 
 for i=1:length (BS(:,1))
     for j=1:length (BS(:,1))
+        if(j~=i)
     Sub=and(visgridBS(:,:,i),visgridBS(:,:,j));
+        end
     end
     Sub(:,:,i)=Sub;
 end

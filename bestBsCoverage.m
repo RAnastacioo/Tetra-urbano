@@ -39,7 +39,7 @@ catch
     idxVisgrid(1,1)=idxVisgrid1;
     coverage=(maax/length(lng_map(:)))*100;
     
-    if(coverage<coverageTarget)
+    if(coverage<=coverageTarget)
         %% Best BS2
         %obtendo o segundo melhor ponto ignorando pontos de subreposiçao
         j=~and(visgrid(:,:,idxVisgrid1),visgrid(:,:,:));
@@ -52,7 +52,7 @@ catch
         coverage=coverage+(maax2/length(lng_map(:)))*100;
     end
     
-    if(coverage<coverageTarget)
+    if(coverage<=coverageTarget)
         %% Best BS3
         %obtendo o segundo melhor ponto ignorando pontos de subreposiçao
         k=or(visgrid(:,:,idxVisgrid2),visgrid(:,:,idxVisgrid1));
@@ -69,7 +69,7 @@ catch
     %% Best BS4
     %obtendo o segundo melhor ponto ignorando pontos de subreposiçao
     ii=3;
-    while coverage < coverageTarget
+    while coverage <= coverageTarget
         k=or(k,visgrid(:,:,idxVisgrid(ii,1)));
         ii=ii+1;
         
