@@ -11,7 +11,7 @@ rasterSize = size(elevation_map);
 %GEOREFCELLS Reference raster cells to geographic coordinates
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
-%% BBC
+%% BestBSCoverage 
 coverageTarget=90;
 [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,alturaAntena);
 
