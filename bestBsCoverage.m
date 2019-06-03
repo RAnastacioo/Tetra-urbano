@@ -1,9 +1,8 @@
-function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R)
+function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget)
 altAntena=30; %metros
 passo=200;
 tic
 i=1:passo:size(lat_map(:));
-BS = struct;
 
 %% visgrid(:,:,indx)
 try
@@ -30,43 +29,59 @@ catch
     save(['backup_vigrid_passo_' num2str(passo)],'visgrid');
 end
 
-%% Best BS1
-numberOnes(:,1)=sum(sum(visgrid(:,:,:)));
-[maax,idxVisgrid]=max(numberOnes);
-idxMap=i(idxVisgrid);
-BS.BS1=[lng_map(idxMap),lat_map(idxMap),elevation_map(idxMap)];
-coverageBS1=(maax/length(lng_map(:)))*100;
-
-%% Best BS2
-%obtendo o segundo melhor ponto ignorando pontos de subreposiçao
-j=~and(visgrid(:,:,idxVisgrid),visgrid(:,:,:));
-x=and(j,visgrid(:,:,:));
-numberOnes2(:,1)=sum(sum(x(:,:,:)));
-[maax2,idxVisgrid2]=max(numberOnes2);
-idxMap2=i(idxVisgrid2);
-BS.BS2=[lng_map(idxMap2),lat_map(idxMap2),elevation_map(idxMap2)];
-coverageBS2=(maax2/length(lng_map(:)))*100;
-
-%% Best BS3
-%obtendo o segundo melhor ponto ignorando pontos de subreposiçao
-k=or(visgrid(:,:,idxVisgrid2),visgrid(:,:,idxVisgrid));
-j=~and(k,visgrid(:,:,:));
-x=and(j,visgrid(:,:,:));
-numberOnes3(:,1)=sum(sum(x(:,:,:)));
-[maax3,idxVisgrid3]=max(numberOnes3);
-idxMap3=i(idxVisgrid3);
-BS.BS3=[lng_map(idxMap3),lat_map(idxMap3),elevation_map(idxMap3)];
-coverageBS3=(maax3/length(lng_map(:)))*100;
-
-%% Best BS4
-%obtendo o segundo melhor ponto ignorando pontos de subreposiçao
-k=or(k,visgrid(:,:,idxVisgrid3));
-j=~and(k,visgrid(:,:,:));
-x=and(j,visgrid(:,:,:));
-numberOnes4(:,1)=sum(sum(x(:,:,:)));
-[maax4,idxVisgrid4]=max(numberOnes4);
-idxMap4=i(idxVisgrid4);
-BS.BS4=[lng_map(idxMap4),lat_map(idxMap4),elevation_map(idxMap4)];
-coverageBS4=(maax4/length(lng_map(:)))*100;
-
+try
+    load(['BS_Coverage' num2str(coverageTarget)]);
+catch
+    %% Best BS1
+    numberOnes(:,1)=sum(sum(visgrid(:,:,:)));
+    [maax,idxVisgrid1]=max(numberOnes);
+    idxMap=i(idxVisgrid1);
+    BS(1,:)=[lng_map(idxMap),lat_map(idxMap),elevation_map(idxMap)];
+    idxVisgrid(1,1)=idxVisgrid1;
+    coverageBS1=(maax/length(lng_map(:)))*100;
+    
+    %% Best BS2
+    %obtendo o segundo melhor ponto ignorando pontos de subreposiçao
+    j=~and(visgrid(:,:,idxVisgrid1),visgrid(:,:,:));
+    x=and(j,visgrid(:,:,:));
+    numberOnes2(:,1)=sum(sum(x(:,:,:)));
+    [maax2,idxVisgrid2]=max(numberOnes2);
+    idxMap2=i(idxVisgrid2);
+    BS(2,:)=[lng_map(idxMap2),lat_map(idxMap2),elevation_map(idxMap2)];
+    idxVisgrid(2,1)=idxVisgrid2;
+    coverageBS2=(maax2/length(lng_map(:)))*100;
+    
+    %% Best BS3
+    %obtendo o segundo melhor ponto ignorando pontos de subreposiçao
+    k=or(visgrid(:,:,idxVisgrid2),visgrid(:,:,idxVisgrid1));
+    j=~and(k,visgrid(:,:,:));
+    x=and(j,visgrid(:,:,:));
+    numberOnes3(:,1)=sum(sum(x(:,:,:)));
+    [maax3,idxVisgrid3]=max(numberOnes3);
+    idxMap3=i(idxVisgrid3);
+    BS(3,:)=[lng_map(idxMap3),lat_map(idxMap3),elevation_map(idxMap3)];
+    coverageBS3=(maax3/length(lng_map(:)))*100;
+    
+    
+    idxVisgrid(3,1)=idxVisgrid3;
+    coverage=coverageBS1+coverageBS2+coverageBS3;
+    %% Best BS4
+    %obtendo o segundo melhor ponto ignorando pontos de subreposiçao
+    ii=3;
+    while coverage < coverageTarget
+        k=or(k,visgrid(:,:,idxVisgrid(ii,1)));
+        ii=ii+1;
+        
+        j=~and(k,visgrid(:,:,:));
+        x=and(j,visgrid(:,:,:));
+        numberOnes(:,1)=sum(sum(x(:,:,:)));
+        [maax,idxVisgridd]=max(numberOnes);
+        idxMap=i(idxVisgridd);
+        coveragee=(maax/length(lng_map(:)))*100;
+        BS(ii,:)=[lng_map(idxMap),lat_map(idxMap),elevation_map(idxMap)];
+        idxVisgrid(ii,1)=idxVisgridd;
+        coverage=coverage+coveragee;
+    end
+    save(['BS_Coverage' num2str(coverageTarget)],'BS')
+end
 end

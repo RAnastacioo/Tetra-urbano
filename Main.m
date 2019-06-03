@@ -1,10 +1,7 @@
 clearvars;clc;close all;
 SAMPLES = 512;
 alturaAntena=30;
-% load('backup_Lisboa_512.mat')
-load('backup_Porto_512.mat')
-% load('backup_512_new.mat')
-% load('Antena400MhzGain13.mat');
+load('backup_512.mat');
 disp('Displaying Data');
 %% All Line-of-sight visibility points in terrain
 latlim = [min(lat_map(:)), max(lat_map(:))];
@@ -14,64 +11,57 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BBC
-[BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R);
+coverageTarget=70;
+[BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget);
 
-%% BS1
-[Prx_dBmBS1,visgridBS1]=Antena('BS1','Coverage Map - BS1',BS.BS1,elevation_map,lat_map,lng_map,R);
-%% BS2
-[Prx_dBmBS2,visgridBS2]=Antena('BS2','Coverage Map - BS2',BS.BS2,elevation_map,lat_map,lng_map,R);
-%% BS3
-[Prx_dBmBS3,visgridBS3]=Antena('BS3','Coverage Map - BS3',BS.BS3,elevation_map,lat_map,lng_map,R);
-%% BS4
-[Prx_dBmBS4,visgridBS4]=Antena('BS4','Coverage Map - BS4',BS.BS4,elevation_map,lat_map,lng_map,R);
+Prx_dBmBS=NaN(size(lat_map));
+visgridBS=NaN(size(lat_map));
+for i=1:length (BS)
+    [Prx_dBmBS(:,:,i),visgridBS(:,:,i)]=Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R);
+end
+
 
 %% PRX
-%Prx_dBm=NaN(SAMPLES,SAMPLES);
-Prx_dBm=Prx_dBmBS1;
-Prx_dBm(visgridBS2)=Prx_dBmBS2(visgridBS2);
-Prx_dBm(visgridBS3)=Prx_dBmBS3(visgridBS3);
-Prx_dBm(visgridBS4)=Prx_dBmBS4(visgridBS4);
-
+Prx_dBm=Prx_dBmBS(:,:,1);
+for i=1:length (BS)
+    auxPrx=Prx_dBmBS(:,:,i);
+    auxVisgrid=logical(visgridBS(:,:,i));
+    Prx_dBm(auxVisgrid)=auxPrx(auxVisgrid);
+end
 %% intrecção pontos de visibilidade
 %Sub=NaN(size(visgridBS1));
-Sub=and(visgridBS1,visgridBS2);
-Sub2=and(visgridBS1,visgridBS3);
-Sub3=and(visgridBS2,visgridBS3);
-Sub4=and(visgridBS2,visgridBS4);
-Sub5=and(visgridBS4,visgridBS4);
-Sub6=and(visgridBS1,visgridBS4);
+% Sub=and(visgridBS1,visgridBS2);
+% Sub2=and(visgridBS1,visgridBS3);
+% Sub3=and(visgridBS2,visgridBS3);
+% Sub4=and(visgridBS2,visgridBS4);
+% Sub5=and(visgridBS4,visgridBS4);
+% Sub6=and(visgridBS1,visgridBS4);
 
-%% Coverage Area 
-orr=or(visgridBS1,visgridBS2);
-orr=or(orr,visgridBS3);
-orr=or(orr,visgridBS4);
-numberOnes(:,1)=sum(sum(orr));
-coverage=round((max(numberOnes/length(lng_map(:)))*100));
-fprintf('Cobertura total: %d%% \n',coverage);
+%% Coverage Area
+coverageTotal=Prx_dBm;
+coverageTotal(isnan(coverageTotal))=0;
+coverageTotal=logical(coverageTotal);
+numberOnes(:,1)=sum(sum(coverageTotal));
+coverageTotal=round((max(numberOnes/length(lng_map(:)))*100));
 
 %% color devision
 signalColor=colorLegend(Prx_dBm);
-% mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
 
 %% Displays the data
-figure('Name','BS1+BS2+BS3+BS4');
+figure('Name','Todas as BS');
 %subplot(1,2,1);
 axis tight
 mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
 hold on
-title('Coverage Map - BS1 & BS2 & BS3 & BS4');
+title(strcat(['Coverage map : ',num2str(coverageTotal),'%']));
 xlabel('Latitude (Âº)');
 ylabel('Longitude (Âº)');
 zlabel('Elevation (m)');
-scatter3(BS.BS1(1,1),BS.BS1(1,2),BS.BS1(1,3)+alturaAntena,'filled','v','m','SizeData',200);
-scatter3(BS.BS2(1,1),BS.BS2(1,2),BS.BS3(1,3)+alturaAntena,'filled','v','m','SizeData',200);
-scatter3(BS.BS3(1,1),BS.BS3(1,2),BS.BS3(1,3)+alturaAntena,'filled','v','m','SizeData',200);
-scatter3(BS.BS4(1,1),BS.BS4(1,2),BS.BS4(1,3)+alturaAntena,'filled','v','m','SizeData',200);
-plot3(lng_map(Sub2),lat_map(Sub2),elevation_map(Sub2),'w.','markersize',5);
-plot3(lng_map(Sub3),lat_map(Sub3),elevation_map(Sub3),'w.','markersize',5);
-plot3(lng_map(Sub4),lat_map(Sub4),elevation_map(Sub4),'w.','markersize',5);
-plot3(lng_map(Sub5),lat_map(Sub5),elevation_map(Sub5),'w.','markersize',5);
-plot3(lng_map(Sub6),lat_map(Sub6),elevation_map(Sub6),'w.','markersize',5);
+for i=1:length (BS)
+     scatter3(BS(i,1),BS(i,2),BS(i,3)+10,'filled','v','m','SizeData',200);
+end
+
+
 hold off
 %subplot(1,2,2);
 %imshow('z_Legend.jpg');
@@ -86,7 +76,3 @@ AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),
 
 %% power image display
 % imagesc(signalColor,[0 255]);
-
-tic
-pa=1:1:10000000;
-toc

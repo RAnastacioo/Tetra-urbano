@@ -59,6 +59,11 @@ antennaAttenuation = at(elev1 + az1.*181);
 %% Prx
 Prx_dBm=Ptx+antennaAttenuation+Gtx+Grx-LFS;
 
+%% Coverage
+numberOnes(:,1)=sum(sum(visgrid));
+coverage=round((max(numberOnes/length(lng_map(:)))*100));
+
+
 %% color devision | Plot
 signalColor=colorLegend(Prx_dBm);
 figure('Name',FigName);
@@ -66,7 +71,7 @@ figure('Name',FigName);
 axis tight
 mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
 hold on
-title(Title);
+title(strcat(Title,[' - Coverage: ',num2str(coverage),'%']));
 xlabel('Latitude (º)');
 ylabel('Longitude (º)');
 zlabel('Elevation (m)');
