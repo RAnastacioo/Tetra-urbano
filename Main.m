@@ -12,8 +12,8 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BBC
-coverageTarget=73;
-[BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget);
+coverageTarget=90;
+[BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,alturaAntena);
 
 Prx_dBmBS=NaN(size(lat_map));
 visgridBS=NaN(size(lat_map));
@@ -29,14 +29,15 @@ for i=1:length (BS(:,1))
     auxVisgrid=logical(visgridBS(:,:,i));
     Prx_dBm(auxVisgrid)=auxPrx(auxVisgrid);
 end
-%% intrecção pontos de visibilidade
-%Sub=NaN(size(visgridBS1));
-% Sub=and(visgridBS1,visgridBS2);
-% Sub2=and(visgridBS1,visgridBS3);
-% Sub3=and(visgridBS2,visgridBS3);
-% Sub4=and(visgridBS2,visgridBS4);
-% Sub5=and(visgridBS4,visgridBS4);
-% Sub6=and(visgridBS1,visgridBS4);
+%% pontos de intrecção
+Sub=NaN(size(visgridBS(:,:,1)));
+
+for i=1:length (BS(:,1))
+    for j=1:length (BS(:,1))
+    Sub=and(visgridBS(:,:,i),visgridBS(:,:,j));
+    end
+    Sub(:,:,i)=Sub;
+end
 
 %% Coverage Area
 coverageTotal=Prx_dBm;
@@ -61,6 +62,10 @@ zlabel('Elevation (m)');
 for i=1:length (BS(:,1))
      scatter3(BS(i,1),BS(i,2),BS(i,3)+10,'filled','v','m','SizeData',200);
 end
+for i=1:length (Sub(1,1,:))
+    plot3(lng_map(Sub(:,:,i)),lat_map(Sub(:,:,i)),elevation_map(Sub(:,:,i)),'o','markersize',1);
+end
+
 hold off
 %subplot(1,2,2);
 %imshow('z_Legend.jpg');

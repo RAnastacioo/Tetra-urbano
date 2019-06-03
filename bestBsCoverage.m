@@ -1,9 +1,8 @@
-function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget)
-altAntena=30; %metros
+function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,altAntena)
 passo=100;
+
 tic
 i=1:passo:size(lat_map(:));
-
 %% visgrid(:,:,indx)
 try
     load (['backup_vigrid_passo_' num2str(passo)]);
