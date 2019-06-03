@@ -3,6 +3,7 @@ SAMPLES = 512;
 alturaAntena=30;
 load('backup_512.mat');
 disp('Displaying Data');
+
 %% All Line-of-sight visibility points in terrain
 latlim = [min(lat_map(:)), max(lat_map(:))];
 lonlim = [min(lng_map(:)), max(lng_map(:))];
@@ -11,19 +12,19 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BBC
-coverageTarget=70;
+coverageTarget=73;
 [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget);
 
 Prx_dBmBS=NaN(size(lat_map));
 visgridBS=NaN(size(lat_map));
-for i=1:length (BS)
+for i=1:length (BS(:,1))
     [Prx_dBmBS(:,:,i),visgridBS(:,:,i)]=Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R);
 end
 
 
 %% PRX
 Prx_dBm=Prx_dBmBS(:,:,1);
-for i=1:length (BS)
+for i=1:length (BS(:,1))
     auxPrx=Prx_dBmBS(:,:,i);
     auxVisgrid=logical(visgridBS(:,:,i));
     Prx_dBm(auxVisgrid)=auxPrx(auxVisgrid);
@@ -57,11 +58,9 @@ title(strcat(['Coverage map : ',num2str(coverageTotal),'%']));
 xlabel('Latitude (º)');
 ylabel('Longitude (º)');
 zlabel('Elevation (m)');
-for i=1:length (BS)
+for i=1:length (BS(:,1))
      scatter3(BS(i,1),BS(i,2),BS(i,3)+10,'filled','v','m','SizeData',200);
 end
-
-
 hold off
 %subplot(1,2,2);
 %imshow('z_Legend.jpg');
