@@ -11,8 +11,8 @@ rasterSize = size(elevation_map);
 %GEOREFCELLS Reference raster cells to geographic coordinates
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
-%% BestBSCoverage 
-coverageTarget=90;
+%% BestBSCoverage
+coverageTarget=70;
 [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,alturaAntena);
 
 Prx_dBmBS=NaN(size(lat_map));
@@ -20,25 +20,27 @@ visgridBS=NaN(size(lat_map));
 for i=1:length (BS(:,1))
     [Prx_dBmBS(:,:,i),visgridBS(:,:,i)]=Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R);
 end
-
+visgridBS=logical(visgridBS);
 
 %% PRX
 Prx_dBm=Prx_dBmBS(:,:,1);
+imax=length (BS(:,1));
+%i=sort(1:imax,'descend')
 for i=1:length (BS(:,1))
     auxPrx=Prx_dBmBS(:,:,i);
-    auxVisgrid=logical(visgridBS(:,:,i));
+    auxVisgrid=visgridBS(:,:,i);
     Prx_dBm(auxVisgrid)=auxPrx(auxVisgrid);
 end
 %% pontos de intrecção
 Sub=NaN(size(visgridBS(:,:,1)));
-
+inter=NaN(size(visgridBS(:,:,1)));
 for i=1:length (BS(:,1))
     for j=1:length (BS(:,1))
         if(j~=i)
-    Sub=and(visgridBS(:,:,i),visgridBS(:,:,j));
+            Sub=and(visgridBS(:,:,i),visgridBS(:,:,j));
         end
     end
-    Sub(:,:,i)=Sub;
+   inter(:,:,i)=Sub;
 end
 
 %% Coverage Area
@@ -62,10 +64,11 @@ xlabel('Latitude (Âº)');
 ylabel('Longitude (Âº)');
 zlabel('Elevation (m)');
 for i=1:length (BS(:,1))
-     scatter3(BS(i,1),BS(i,2),BS(i,3)+10,'filled','v','m','SizeData',200);
+    scatter3(BS(i,1),BS(i,2),BS(i,3)+10,'filled','v','m','SizeData',200);
 end
 for i=1:length (Sub(1,1,:))
-    plot3(lng_map(Sub(:,:,i)),lat_map(Sub(:,:,i)),elevation_map(Sub(:,:,i)),'o','markersize',1);
+    auxInter=logical(inter(:,:,i));
+    plot3(lng_map(auxInter(:)),lat_map(auxInter(:)),elevation_map(auxInter(:)),'o','markersize',1);
 end
 
 hold off
