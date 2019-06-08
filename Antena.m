@@ -72,12 +72,11 @@ axis tight
 mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
 hold on
 title(strcat(Title,[' - Coverage: ',num2str(coverage),'%']));
-xlabel('Latitude (ยบ)');
-ylabel('Longitude (ยบ)');
+xlabel('Latitude (บ)');
+ylabel('Longitude (บ)');
 zlabel('Elevation (m)');
 scatter3(PointLong,PointLat,PointAlt+altAntena,'filled','v','m','SizeData',200);
 % subplot(1,2,2);
 % imshow('z_Legend.jpg');
 hold off
 end
-
