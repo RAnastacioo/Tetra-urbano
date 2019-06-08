@@ -1,5 +1,5 @@
 function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,altAntena)
-passo=100;
+passo=50;
 
 tic
 i=1:passo:size(lat_map(:));
@@ -25,7 +25,8 @@ catch
     ss=seconds(round(toc));
     ss.Format = 'hh:mm:ss';
     fprintf('Duração real: %s \n',ss);
-    save(['backup_vigrid_passo_' num2str(passo)],'visgrid');
+    save(['backup_vigrid_passo_' num2str(passo)],'visgrid', '-v7.3');
+    
 end
 
 try
@@ -83,6 +84,6 @@ catch
         idxVisgrid(ii,1)=idxVisgridd;
         coverage=coverage+coveragee;
     end
-    save(['BS_Coverage' num2str(coverageTarget)],'BS')
+    save(['BS_Coverage' num2str(coverageTarget)],'BS', '-v7.3');
 end
 end
