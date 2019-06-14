@@ -12,7 +12,7 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BestBSCoverage
-coverageTarget=70;
+coverageTarget=95;
 [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,alturaAntena);
 
 Prx_dBmBS=NaN(size(lat_map));
@@ -34,12 +34,23 @@ end
 %% pontos de intrecção
 Sub=NaN(size(visgridBS(:,:,1)));
 inter=NaN(size(visgridBS(:,:,1)));
+fprintf('-----------------\n\n\n')
+fprintf('Interência Co-Canal (Valor médio)\n')
+fprintf('-----------------\n')
 for i=1:length (BS(:,1))
     for j=1:length (BS(:,1))
         if(j~=i)
             Sub=and(visgridBS(:,:,i),visgridBS(:,:,j));
+            CC=(Prx_dBmBS(:,:,i)).*Sub;
+            II=(Prx_dBmBS(:,:,j)).*Sub;
+            XX=CC./II;
+            CI_=XX(XX<=1);
+            CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
+            CI_m=mean(CI,'omitnan');
+            fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m)
         end
     end
+    fprintf('-----------------\n')
    inter(:,:,i)=Sub;
 end
 
