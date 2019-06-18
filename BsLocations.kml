@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+	<Document>
+		<name>BsLocations</name>
+		<Placemark>
+			<Point>
+				<coordinates>-8.6172187,41.1629498,0</coordinates>
+			</Point>
+			<Style>
+				<IconStyle>
+					<Icon>
+						<href>C:\Users\ricar\Desktop\ComMoveis\Tetra_urbano\antenna.png</href>
+					</Icon>
+				</IconStyle>
+			</Style>
+			<styleUrl>#noDrivingDirections</styleUrl>
+		</Placemark>
+		<Placemark>
+			<Point>
+				<coordinates>-8.5888079,41.1601301,0</coordinates>
+			</Point>
+			<Style>
+				<IconStyle>
+					<Icon>
+						<href>C:\Users\ricar\Desktop\ComMoveis\Tetra_urbano\antenna.png</href>
+					</Icon>
+				</IconStyle>
+			</Style>
+			<styleUrl>#noDrivingDirections</styleUrl>
+		</Placemark>
+		<Placemark>
+			<Point>
+				<coordinates>-8.6632441,41.1564141,0</coordinates>
+			</Point>
+			<Style>
+				<IconStyle>
+					<Icon>
+						<href>C:\Users\ricar\Desktop\ComMoveis\Tetra_urbano\antenna.png</href>
+					</Icon>
+				</IconStyle>
+			</Style>
+			<styleUrl>#noDrivingDirections</styleUrl>
+		</Placemark>
+
+	</Document>
+</kml>

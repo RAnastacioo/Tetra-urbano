@@ -4,7 +4,7 @@ alturaAntena=30;
 load('backup_512.mat');
 disp('Displaying Data');
 
-%% All Line-of-sight visibility points in terrain
+%% All Line-of-sight 5isibility points in terrain
 latlim = [min(lat_map(:)), max(lat_map(:))];
 lonlim = [min(lng_map(:)), max(lng_map(:))];
 rasterSize = size(elevation_map);
@@ -12,7 +12,11 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BestBSCoverage
+<<<<<<< HEAD
 coverageTarget=95;
+=======
+coverageTarget=75;
+>>>>>>> master
 [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,alturaAntena);
 
 Prx_dBmBS=NaN(size(lat_map));
@@ -24,14 +28,35 @@ visgridBS=logical(visgridBS);
 
 %% PRX
 Prx_dBm=Prx_dBmBS(:,:,1);
-imax=length (BS(:,1));
-%i=sort(1:imax,'descend')
 for i=1:length (BS(:,1))
     auxPrx=Prx_dBmBS(:,:,i);
     auxVisgrid=visgridBS(:,:,i);
     Prx_dBm(auxVisgrid)=auxPrx(auxVisgrid);
 end
-%% pontos de intrecção
+
+% powerByBestBS
+combs=combinationsWithoutRepeating(length(BS(:,1)),length(BS(:,1)));
+intersect=NaN(size(visgridBS(:,:,1)));
+auxx1=NaN(size(visgridBS(:,:,1)));
+auxx2=NaN(size(visgridBS(:,:,1)));
+for i=1:length (combs(:,1))
+     intersect(:,:,i)=and(visgridBS(:,:,combs(i,1)),visgridBS(:,:,combs(i,2)));
+     auxPrx1=Prx_dBmBS(:,:,combs(i,1));
+     auxPrx2=Prx_dBmBS(:,:,combs(i,2));
+     auxVisgrid=logical(intersect(:,:,i));
+     auxx1(auxVisgrid)=auxPrx1(auxVisgrid);
+     auxx2(auxVisgrid)=auxPrx2(auxVisgrid);
+     if(logical(auxx1> auxx2))
+     Prx_dBm(auxVisgrid)=auxPrx1(auxVisgrid);
+     else
+     Prx_dBm(auxVisgrid)=auxPrx2(auxVisgrid);
+     end
+end
+
+
+
+
+%% Co-Canal
 Sub=NaN(size(visgridBS(:,:,1)));
 inter=NaN(size(visgridBS(:,:,1)));
 fprintf('-----------------\n\n\n')
@@ -45,7 +70,11 @@ for i=1:length (BS(:,1))
             II=10.^((Prx_dBmBS(:,:,j))./10).*Sub;
             XX=CC./II;
             CI_=XX(XX<=1);
+<<<<<<< HEAD
 %             CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
+=======
+%           CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
+>>>>>>> master
             CI_m=mean(CI_,'omitnan');
             fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m)
         end
@@ -53,6 +82,7 @@ for i=1:length (BS(:,1))
     fprintf('-----------------\n')
    inter(:,:,i)=Sub;
 end
+
 
 %% Coverage Area
 coverageTotal=Prx_dBm;
@@ -92,7 +122,9 @@ figure('Name','Antenna Patern Atenuação 3D');
 patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle);
 
 %% KML file
-AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
-
+ exportKmlBsLocations(BS, 'BsLocations');
+ AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
+exportKmlBsLoS(BS, 'Los');
+    
 %% power image display
 % imagesc(signalColor,[0 255]);
