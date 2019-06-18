@@ -35,6 +35,7 @@ end
 % combs=combinationsWithoutRepeating(length(BS(:,1)),length(BS(:,1)));
 % intersect=NaN(size(visgridBS(:,:,1)));
 % cenas1=NaN(size(visgridBS(:,:,1)));
+% cenas2=NaN(size(visgridBS(:,:,1)));
 % for i=1:length (combs(:,1))
 %     intersect(:,:,i)=and(visgridBS(:,:,combs(i,1)),visgridBS(:,:,combs(i,2)));
 %     auxPrx1=Prx_dBmBS(:,:,combs(i,1));
@@ -44,6 +45,8 @@ end
 %     auxx2(auxVisgrid)=auxPrx2(auxVisgrid);
 %     cenas1=logical(auxx1> auxx2);
 %     Prx_dBm(cenas1)=auxPrx1(cenas1);
+%     cenas2=logical(auxx2> auxx1);
+%     Prx_dBm(cenas2)=auxPrx2(cenas2);
 % 
 % end
 
