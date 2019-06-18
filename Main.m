@@ -114,9 +114,9 @@ figure('Name','Antenna Patern Atenuação 3D');
 patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle);
 
 %% KML file
-% exportKmlBsLocations(BS, 'BsLocations');
+ exportKmlBsLocations(BS, 'BsLocations');
  AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
-% exportKmlBsLoS(BS, 'Los');
+exportKmlBsLoS(BS, 'Los');
     
 %% power image display
 % imagesc(signalColor,[0 255]);
