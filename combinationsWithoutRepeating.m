@@ -14,4 +14,4 @@ end
 mask=~isnan(combs(:,1));
 combs=combs(mask,:);
 end
-
+ 

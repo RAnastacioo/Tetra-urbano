@@ -9,7 +9,7 @@ function exportKmlBsLocations(B_STATIONS, filename)
 %filename = 'KML_BS_loc';
 iconFilePath = fullfile(pwd, 'antenna.png');
 iconFilePath = strrep(iconFilePath,'\','\\');
-
+ 
 header = '<?xml version="1.0" encoding="utf-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2">\n\t<Document>\n\t\t';
 footer = '\n\t</Document>\n</kml>';
 

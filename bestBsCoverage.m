@@ -1,6 +1,6 @@
 function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,altAntena)
 passo=50;
-
+ 
 tic
 i=1:passo:size(lat_map(:));
 %% visgrid(:,:,indx)

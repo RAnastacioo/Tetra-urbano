@@ -25,3 +25,4 @@ if EType(1)=='S',  PL = PL -2.*(log10(fc/28))^2 -5.4;  % Eq. (1.10)
   elseif EType(1)=='O' 
     PL=PL+(18.33-4.78.*log10(fc)).*log10(fc)-40.97; % Eq. (1.11)
 end
+ 

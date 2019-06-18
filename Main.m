@@ -33,7 +33,7 @@ for i=1:length (BS(:,1))
     auxVisgrid=visgridBS(:,:,i);
     Prx_dBm(auxVisgrid)=auxPrx(auxVisgrid);
 end
-
+ 
 % powerByBestBS
 combs=combinationsWithoutRepeating(length(BS(:,1)),length(BS(:,1)));
 intersect=NaN(size(visgridBS(:,:,1)));

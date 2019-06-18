@@ -1,7 +1,7 @@
 function exportKml(Coord1, Coord2, figureName, colorBarName, outputFileName)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-
+ 
 % Create KML File
 fid_write = fopen([outputFileName '.kml'],'w');
 fprintf(fid_write,'<?xml version="1.0" encoding="UTF-8"?>\n');
