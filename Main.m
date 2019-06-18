@@ -12,7 +12,11 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BestBSCoverage
+<<<<<<< HEAD
+coverageTarget=95;
+=======
 coverageTarget=75;
+>>>>>>> master
 [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,alturaAntena);
 
 Prx_dBmBS=NaN(size(lat_map));
@@ -66,7 +70,11 @@ for i=1:length (BS(:,1))
             II=10.^((Prx_dBmBS(:,:,j))./10).*Sub;
             XX=CC./II;
             CI_=XX(XX<=1);
+<<<<<<< HEAD
+%             CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
+=======
 %           CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
+>>>>>>> master
             CI_m=mean(CI_,'omitnan');
             fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m)
         end

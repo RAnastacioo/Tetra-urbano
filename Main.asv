@@ -4,7 +4,11 @@ alturaAntena=30;
 load('backup_512.mat');
 disp('Displaying Data');
 
+<<<<<<< HEAD
+%% All Line-of-sight visibility points in terrain
+=======
 %% All Line-of-sight 5isibility points in terrain
+>>>>>>> master
 latlim = [min(lat_map(:)), max(lat_map(:))];
 lonlim = [min(lng_map(:)), max(lng_map(:))];
 rasterSize = size(elevation_map);
@@ -12,7 +16,11 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BestBSCoverage
+<<<<<<< HEAD
+coverageTarget=95;
+=======
 coverageTarget=75;
+>>>>>>> master
 [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,alturaAntena);
 
 Prx_dBmBS=NaN(size(lat_map));
@@ -24,11 +32,19 @@ visgridBS=logical(visgridBS);
 
 %% PRX
 Prx_dBm=Prx_dBmBS(:,:,1);
+<<<<<<< HEAD
+imax=length (BS(:,1));
+%i=sort(1:imax,'descend')
+=======
+>>>>>>> master
 for i=1:length (BS(:,1))
     auxPrx=Prx_dBmBS(:,:,i);
     auxVisgrid=visgridBS(:,:,i);
     Prx_dBm(auxVisgrid)=auxPrx(auxVisgrid);
 end
+<<<<<<< HEAD
+%% pontos de intrecção
+=======
 
 % powerByBestBS
 combs=combinationsWithoutRepeating(length(BS(:,1)),length(BS(:,1)));
@@ -53,6 +69,7 @@ end
 
 
 %% Co-Canal
+>>>>>>> master
 Sub=NaN(size(visgridBS(:,:,1)));
 inter=NaN(size(visgridBS(:,:,1)));
 fprintf('-----------------\n\n\n')
@@ -62,12 +79,21 @@ for i=1:length (BS(:,1))
     for j=1:length (BS(:,1))
         if(j~=i)
             Sub=and(visgridBS(:,:,i),visgridBS(:,:,j));
+<<<<<<< HEAD
+            CC=(Prx_dBmBS(:,:,i)).*Sub;
+            II=(Prx_dBmBS(:,:,j)).*Sub;
+            XX=CC./II;
+            CI_=XX(XX<=1);
+            CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
+            CI_m=mean(CI,'omitnan');
+=======
             CC=10.^((Prx_dBmBS(:,:,i))./10).*Sub;
             II=10.^((Prx_dBmBS(:,:,j))./10).*Sub;
             XX=CC./II;
             CI_=XX(XX<=1);
 %           CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
             CI_m=mean(CI_,'omitnan');
+>>>>>>> master
             fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m)
         end
     end
@@ -75,7 +101,10 @@ for i=1:length (BS(:,1))
    inter(:,:,i)=Sub;
 end
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> master
 %% Coverage Area
 coverageTotal=Prx_dBm;
 coverageTotal(isnan(coverageTotal))=0;
@@ -114,9 +143,14 @@ figure('Name','Antenna Patern Atenuação 3D');
 patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle);
 
 %% KML file
+<<<<<<< HEAD
+AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
+
+=======
 % exportKmlBsLocations(BS, 'BsLocations');
  AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
 % exportKmlBsLoS(BS, 'Los');
     
+>>>>>>> master
 %% power image display
 % imagesc(signalColor,[0 255]);

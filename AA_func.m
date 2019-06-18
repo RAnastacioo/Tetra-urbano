@@ -91,18 +91,5 @@ fprintf(fid_write,'  </Folder>\n');
 fprintf(fid_write,'</kml>\n');
 fclose(fid_write);
 %  winopen(strcat(FILE_NAME,'.kml'))
-
-
-if ismac
-    % Code to run on Mac plaform
-    cmd = 'open -a Google\ Earth ';
-    fullfilename = fullfile(pwd, [FILE_NAME, '.kml']);
-    system([cmd fullfilename]);
-    
-elseif ispc
-    % Code to run on Windows platform
-    winopen(strcat(FILE_NAME,'.kml'));
-    
-end
 end
 
