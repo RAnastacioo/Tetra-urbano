@@ -20,7 +20,7 @@ function [vismap, R] = viewshed_nova(Z, R, lat1, lon1, ...
 %
 %   If R is a referencing matrix, it must be 3-by-2 and transform raster
 %   row and column indices to/from geographic coordinates according to:
-% 
+%  
 %                   [lon lat] = [row col 1] * R.
 %
 %   If R is a referencing matrix, it must define a (non-rotational,

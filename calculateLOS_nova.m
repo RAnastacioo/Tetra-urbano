@@ -2,7 +2,7 @@ function [vis0, dist, h, lattrk, lontrk, x1, z1, x2, z2, npts] ...
     = calculateLOS_nova(F, R, lat1, lon1, lat2, lon2, oalt, talt, ...
     observerAltitudeIsAGL, targetAltitudeIsAGL, actualradius, apparentradius)
 % Perform the line-of-sight computations needed by LOS2 and VIEWSHED.
-
+ 
 % Copyright 2014-2015 The MathWorks, Inc.
 
 % Sample at slightly less than the elevation grid spacing.

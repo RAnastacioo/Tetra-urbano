@@ -5,7 +5,7 @@ LINE_COLOUR = 'afafafaf';
 BALLON_COLOUR = '00664422';
 TEXT_COLOUR = 'ff000000';
 LINE_WIDTH = 5;
-
+ 
 
 header = '<?xml version="1.0" encoding="utf-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2">\n\t<Document>\n';
 footer = '\n\t</Document>\n</kml>';
