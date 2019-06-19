@@ -41,6 +41,45 @@
 			</Style>
 			<styleUrl>#noDrivingDirections</styleUrl>
 		</Placemark>
+		<Placemark>
+			<Point>
+				<coordinates>-8.5823681,41.1774669,0</coordinates>
+			</Point>
+			<Style>
+				<IconStyle>
+					<Icon>
+						<href>C:\Users\ricar\Desktop\ComMoveis\Tetra_urbano\antenna.png</href>
+					</Icon>
+				</IconStyle>
+			</Style>
+			<styleUrl>#noDrivingDirections</styleUrl>
+		</Placemark>
+		<Placemark>
+			<Point>
+				<coordinates>-8.6064226,41.1564185,0</coordinates>
+			</Point>
+			<Style>
+				<IconStyle>
+					<Icon>
+						<href>C:\Users\ricar\Desktop\ComMoveis\Tetra_urbano\antenna.png</href>
+					</Icon>
+				</IconStyle>
+			</Style>
+			<styleUrl>#noDrivingDirections</styleUrl>
+		</Placemark>
+		<Placemark>
+			<Point>
+				<coordinates>-8.6687368,41.1762282,0</coordinates>
+			</Point>
+			<Style>
+				<IconStyle>
+					<Icon>
+						<href>C:\Users\ricar\Desktop\ComMoveis\Tetra_urbano\antenna.png</href>
+					</Icon>
+				</IconStyle>
+			</Style>
+			<styleUrl>#noDrivingDirections</styleUrl>
+		</Placemark>
 
 	</Document>
 </kml>

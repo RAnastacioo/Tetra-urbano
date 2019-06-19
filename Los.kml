@@ -32,6 +32,48 @@
 
 		<Placemark>
 			<LineString>
+				<coordinates>-8.6172187,41.1629498,1.344801e+02. -8.5823681,41.1774669,1.557643e+02.</coordinates>
+				<altitudeMode>relativeToGround</altitudeMode>
+			</LineString>
+				<Style>
+					<LineStyle> <color>#afafafaf</color> <width>5</width> </LineStyle>
+					<BalloonStyle>
+						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
+						<text>Line of Sight betwen:<br/> 1 and 4<br/>Distance: 3.33Km</text>
+					</BalloonStyle>
+				</Style>
+		</Placemark>
+
+		<Placemark>
+			<LineString>
+				<coordinates>-8.6172187,41.1629498,1.344801e+02. -8.6064226,41.1564185,1.400717e+02.</coordinates>
+				<altitudeMode>relativeToGround</altitudeMode>
+			</LineString>
+				<Style>
+					<LineStyle> <color>#afafafaf</color> <width>5</width> </LineStyle>
+					<BalloonStyle>
+						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
+						<text>Line of Sight betwen:<br/> 1 and 5<br/>Distance: 1.16Km</text>
+					</BalloonStyle>
+				</Style>
+		</Placemark>
+
+		<Placemark>
+			<LineString>
+				<coordinates>-8.6172187,41.1629498,1.344801e+02. -8.6687368,41.1762282,6.305513e+01.</coordinates>
+				<altitudeMode>relativeToGround</altitudeMode>
+			</LineString>
+				<Style>
+					<LineStyle> <color>#afafafaf</color> <width>5</width> </LineStyle>
+					<BalloonStyle>
+						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
+						<text>Line of Sight betwen:<br/> 1 and 6<br/>Distance: 4.56Km</text>
+					</BalloonStyle>
+				</Style>
+		</Placemark>
+
+		<Placemark>
+			<LineString>
 				<coordinates>-8.5888079,41.1601301,1.561567e+02. -8.6632441,41.1564141,6.315228e+01.</coordinates>
 				<altitudeMode>relativeToGround</altitudeMode>
 			</LineString>
@@ -40,6 +82,132 @@
 					<BalloonStyle>
 						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
 						<text>Line of Sight betwen:<br/> 2 and 3<br/>Distance: 6.25Km</text>
+					</BalloonStyle>
+				</Style>
+		</Placemark>
+
+		<Placemark>
+			<LineString>
+				<coordinates>-8.5888079,41.1601301,1.561567e+02. -8.5823681,41.1774669,1.557643e+02.</coordinates>
+				<altitudeMode>relativeToGround</altitudeMode>
+			</LineString>
+				<Style>
+					<LineStyle> <color>#afafafaf</color> <width>5</width> </LineStyle>
+					<BalloonStyle>
+						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
+						<text>Line of Sight betwen:<br/> 2 and 4<br/>Distance: 2.00Km</text>
+					</BalloonStyle>
+				</Style>
+		</Placemark>
+
+		<Placemark>
+			<LineString>
+				<coordinates>-8.5888079,41.1601301,1.561567e+02. -8.6064226,41.1564185,1.400717e+02.</coordinates>
+				<altitudeMode>relativeToGround</altitudeMode>
+			</LineString>
+				<Style>
+					<LineStyle> <color>#afafafaf</color> <width>5</width> </LineStyle>
+					<BalloonStyle>
+						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
+						<text>Line of Sight betwen:<br/> 2 and 5<br/>Distance: 1.53Km</text>
+					</BalloonStyle>
+				</Style>
+		</Placemark>
+
+		<Placemark>
+			<LineString>
+				<coordinates>-8.5888079,41.1601301,1.561567e+02. -8.6687368,41.1762282,6.305513e+01.</coordinates>
+				<altitudeMode>relativeToGround</altitudeMode>
+			</LineString>
+				<Style>
+					<LineStyle> <color>#afafafaf</color> <width>5</width> </LineStyle>
+					<BalloonStyle>
+						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
+						<text>Line of Sight betwen:<br/> 2 and 6<br/>Distance: 6.93Km</text>
+					</BalloonStyle>
+				</Style>
+		</Placemark>
+
+		<Placemark>
+			<LineString>
+				<coordinates>-8.6632441,41.1564141,6.315228e+01. -8.5823681,41.1774669,1.557643e+02.</coordinates>
+				<altitudeMode>relativeToGround</altitudeMode>
+			</LineString>
+				<Style>
+					<LineStyle> <color>#afafafaf</color> <width>5</width> </LineStyle>
+					<BalloonStyle>
+						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
+						<text>Line of Sight betwen:<br/> 3 and 4<br/>Distance: 7.16Km</text>
+					</BalloonStyle>
+				</Style>
+		</Placemark>
+
+		<Placemark>
+			<LineString>
+				<coordinates>-8.6632441,41.1564141,6.315228e+01. -8.6064226,41.1564185,1.400717e+02.</coordinates>
+				<altitudeMode>relativeToGround</altitudeMode>
+			</LineString>
+				<Style>
+					<LineStyle> <color>#afafafaf</color> <width>5</width> </LineStyle>
+					<BalloonStyle>
+						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
+						<text>Line of Sight betwen:<br/> 3 and 5<br/>Distance: 4.76Km</text>
+					</BalloonStyle>
+				</Style>
+		</Placemark>
+
+		<Placemark>
+			<LineString>
+				<coordinates>-8.6632441,41.1564141,6.315228e+01. -8.6687368,41.1762282,6.305513e+01.</coordinates>
+				<altitudeMode>relativeToGround</altitudeMode>
+			</LineString>
+				<Style>
+					<LineStyle> <color>#afafafaf</color> <width>5</width> </LineStyle>
+					<BalloonStyle>
+						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
+						<text>Line of Sight betwen:<br/> 3 and 6<br/>Distance: 2.25Km</text>
+					</BalloonStyle>
+				</Style>
+		</Placemark>
+
+		<Placemark>
+			<LineString>
+				<coordinates>-8.5823681,41.1774669,1.557643e+02. -8.6064226,41.1564185,1.400717e+02.</coordinates>
+				<altitudeMode>relativeToGround</altitudeMode>
+			</LineString>
+				<Style>
+					<LineStyle> <color>#afafafaf</color> <width>5</width> </LineStyle>
+					<BalloonStyle>
+						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
+						<text>Line of Sight betwen:<br/> 4 and 5<br/>Distance: 3.09Km</text>
+					</BalloonStyle>
+				</Style>
+		</Placemark>
+
+		<Placemark>
+			<LineString>
+				<coordinates>-8.5823681,41.1774669,1.557643e+02. -8.6687368,41.1762282,6.305513e+01.</coordinates>
+				<altitudeMode>relativeToGround</altitudeMode>
+			</LineString>
+				<Style>
+					<LineStyle> <color>#afafafaf</color> <width>5</width> </LineStyle>
+					<BalloonStyle>
+						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
+						<text>Line of Sight betwen:<br/> 4 and 6<br/>Distance: 7.23Km</text>
+					</BalloonStyle>
+				</Style>
+		</Placemark>
+
+		<Placemark>
+			<LineString>
+				<coordinates>-8.6064226,41.1564185,1.400717e+02. -8.6687368,41.1762282,6.305513e+01.</coordinates>
+				<altitudeMode>relativeToGround</altitudeMode>
+			</LineString>
+				<Style>
+					<LineStyle> <color>#afafafaf</color> <width>5</width> </LineStyle>
+					<BalloonStyle>
+						<bgColor>00664422</bgColor> <textColor>ff000000</textColor>
+						<text>Line of Sight betwen:<br/> 5 and 6<br/>Distance: 5.66Km</text>
 					</BalloonStyle>
 				</Style>
 		</Placemark>
