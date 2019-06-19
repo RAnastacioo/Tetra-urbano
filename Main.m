@@ -1,3 +1,4 @@
+
 clearvars;clc;close all;
 SAMPLES = 512;
 alturaAntena=30;
@@ -146,3 +147,4 @@ exportKmlBsLoS(BS, 'Los');
 
 %% power image display
 % imagesc(signalColor,[0 255]);
+
