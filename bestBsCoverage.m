@@ -1,5 +1,5 @@
 function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,altAntena)
-passo=50;
+passo=200;
  
 tic
 i=1:passo:size(lat_map(:));

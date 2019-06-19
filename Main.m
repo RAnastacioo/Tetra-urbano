@@ -2,7 +2,6 @@ clearvars;clc;close all;
 SAMPLES = 512;
 alturaAntena=30;
 load('backup_512.mat');
-disp('Displaying Data');
 
 %% All Line-of-sight 5isibility points in terrain
 latlim = [min(lat_map(:)), max(lat_map(:))];
@@ -12,24 +11,28 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BestBSCoverage
-coverageTarget=75;
+coverageTarget=20;
 [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,alturaAntena);
 
 Prx_dBmBS=NaN(size(lat_map));
 visgridBS=NaN(size(lat_map));
+visgridALL=zeros(size(lat_map));
 for i=1:length (BS(:,1))
     [Prx_dBmBS(:,:,i),visgridBS(:,:,i)]=Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R);
+    visgridALL=or (visgridALL,visgridBS(:,:,i));
 end
 visgridBS=logical(visgridBS);
 [~,bestServerPixel]=max(Prx_dBmBS,[],3);
+bestServerPixel(~visgridALL)=0;
 figure;
-mesh(lng_map(1,:), lat_map(:,1), elevation_map,bestServerPixel);
+hm=mesh(lng_map(1,:), lat_map(:,1), elevation_map,bestServerPixel);
 hold on
 title("BestServerPixel");
 xlabel('Latitude (º)');
 ylabel('Longitude (º)');
 zlabel('Elevation (m)');
 hold off
+
 
 %% PRX
 Prx_dBm=NaN(size(lat_map));
@@ -57,7 +60,7 @@ for i=1:length (BS(:,1))
             CI_=XX(XX<=1);
             %           CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
             CI_m=mean(CI_,'omitnan');
-            fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m)
+            fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m);
         end
     end
     fprintf('-----------------\n')
@@ -66,9 +69,7 @@ end
 
 
 %% Coverage Area
-coverageTotal=Prx_dBm;
-coverageTotal(isnan(coverageTotal))=0;
-coverageTotal=logical(coverageTotal);
+coverageTotal=logical(visgridALL);
 numberOnes(:,1)=sum(sum(coverageTotal));
 coverageTotal=round((max(numberOnes/length(lng_map(:)))*100));
 
@@ -88,10 +89,6 @@ zlabel('Elevation (m)');
 for i=1:length (BS(:,1))
     scatter3(BS(i,1),BS(i,2),BS(i,3)+10,'filled','v','m','SizeData',200);
 end
-% for i=1:length (Sub(1,1,:))
-%     auxInter=logical(inter(:,:,i));
-%     plot3(lng_map(auxInter(:)),lat_map(auxInter(:)),elevation_map(auxInter(:)),'o','markersize',1);
-% end
 
 hold off
 %subplot(1,2,2);

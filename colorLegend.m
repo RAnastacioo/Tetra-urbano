@@ -6,7 +6,7 @@ SIGNAL_LEVEL_COVERAGE_MAP_IMAGE_B = uint8(zeros(length(SIGNAL_COVERAGE_LEVELS(:,
 Signal_levels_and_colors = [1e9     -10     254 000 000
                             -10     -20     255 127 000
                             -20     -30     254 165 000
-                             -30     -40     254 206 000
+                             -30     -40    254 206 000
                             -40     -50     255 255 000
                             -50     -60     184 255 000
                             -60     -70     000 255 001

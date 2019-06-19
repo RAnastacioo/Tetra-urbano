@@ -4,7 +4,7 @@
 		<name>BsLocations</name>
 		<Placemark>
 			<Point>
-				<coordinates>-8.6172187,41.1629498,0</coordinates>
+				<coordinates>-7.5240204,41.5593994,0</coordinates>
 			</Point>
 			<Style>
 				<IconStyle>
@@ -17,20 +17,7 @@
 		</Placemark>
 		<Placemark>
 			<Point>
-				<coordinates>-8.5888079,41.1601301,0</coordinates>
-			</Point>
-			<Style>
-				<IconStyle>
-					<Icon>
-						<href>C:\Users\ricar\Desktop\ComMoveis\Tetra_urbano\antenna.png</href>
-					</Icon>
-				</IconStyle>
-			</Style>
-			<styleUrl>#noDrivingDirections</styleUrl>
-		</Placemark>
-		<Placemark>
-			<Point>
-				<coordinates>-8.6632441,41.1564141,0</coordinates>
+				<coordinates>-7.8985131,41.2473789,0</coordinates>
 			</Point>
 			<Style>
 				<IconStyle>
