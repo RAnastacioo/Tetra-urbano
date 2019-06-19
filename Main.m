@@ -24,32 +24,47 @@ visgridBS=logical(visgridBS);
 
 
 %% PRX
- Prx_dBm=Prx_dBmBS(:,:,1);
+Prx_dBm=Prx_dBmBS(:,:,1);
 for i=1:length (BS(:,1))
     auxPrx=Prx_dBmBS(:,:,i);
     auxVisgrid=visgridBS(:,:,i);
     Prx_dBm(auxVisgrid)=auxPrx(auxVisgrid);
 end
 
-% powerByBestBS
-% combs=combinationsWithoutRepeating(length(BS(:,1)),length(BS(:,1)));
-% intersect=NaN(size(visgridBS(:,:,1)));
-% cenas1=NaN(size(visgridBS(:,:,1)));
-% cenas2=NaN(size(visgridBS(:,:,1)));
-% for i=1:length (combs(:,1))
-%     intersect(:,:,i)=and(visgridBS(:,:,combs(i,1)),visgridBS(:,:,combs(i,2)));
-%     auxPrx1=Prx_dBmBS(:,:,combs(i,1));
-%     auxPrx2=Prx_dBmBS(:,:,combs(i,2));
-%     auxVisgrid=logical(intersect(:,:,i));
-%     auxx1(auxVisgrid)=auxPrx1(auxVisgrid);
-%     auxx2(auxVisgrid)=auxPrx2(auxVisgrid);
-%     cenas1=logical(auxx1> auxx2);
-%     Prx_dBm(cenas1)=auxPrx1(cenas1);
-%     cenas2=logical(auxx2> auxx1);
-%     Prx_dBm(cenas2)=auxPrx2(cenas2);
-% 
-% end
+%% powerByBestBS
+PT=zeros(size(visgridBS(:,:,length (BS(:,1)))));
 
+for i=1:length (BS(:,1))
+%    auxP1=Prx_dBmBS(:,:,i);
+    for ii=1:length (PT)
+        for jj=1:length (PT)
+            Count=0;
+            for j=1:length (BS(:,1))
+%                 auxP2=Prx_dBmBS(:,:,j);
+                if(j~=i)
+                    if((Prx_dBmBS(ii,jj,i))>(Prx_dBmBS(ii,jj,j)))
+                        Count=Count+1;
+                    elseif ((isnan(Prx_dBmBS(ii,jj,i)))<(isnan(Prx_dBmBS(ii,jj,j))))
+                        Count=Count+1;
+                    else
+                        Count=0;
+                    end
+                    
+                end
+            end
+            if(Count==length (BS(:,1))-1)
+                PT(ii,jj,i)=1;
+            end
+        end 
+        
+    end
+    
+    %     PT(:,:,i)=Prx_dBmBS(:,:,i).*PT(:,:,i);
+    figure;
+    title=('teste');
+    mesh(lng_map(1,:), lat_map(:,1), elevation_map,PT(:,:,i));
+    
+end
 
 
 
@@ -63,13 +78,24 @@ for i=1:length (BS(:,1))
     for j=1:length (BS(:,1))
         if(j~=i)
             Sub=and(visgridBS(:,:,i),visgridBS(:,:,j));
+            CI_threshold=(abs(((Prx_dBmBS(:,:,i))))-abs((Prx_dBmBS(:,:,j)))).*Sub;
+            Sub1=Sub;
+            for ii=1:length (Sub)
+                for jj=1:length (Sub)
+                    if((CI_threshold(ii,jj)>=20))
+                        Sub(ii,jj)=0;
+                    end
+                end
+            end
+            
             CC=10.^((Prx_dBmBS(:,:,i))./10).*Sub;
-            II=10.^((Prx_dBmBS(:,:,j))./10).*Sub;
-            XX=CC./II;
+            III=10.^((Prx_dBmBS(:,:,j))./10).*Sub;
+            
+            XX=(CC./III);
             CI_=XX(XX<=1);
             %           CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
-            CI_m=mean(CI_,'omitnan');
-            fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m)
+            CI_m=mean(CI_,'omitnan')*100;
+            fprintf('BS%d c/ BS%d = %.2f%% \n',i,j,CI_m)
         end
     end
     fprintf('-----------------\n')
@@ -86,7 +112,6 @@ coverageTotal=round((max(numberOnes/length(lng_map(:)))*100));
 
 %% color devision
 signalColor=colorLegend(Prx_dBm);
-
 %% Displays the data
 figure('Name','Todas as BS');
 %subplot(1,2,1);
