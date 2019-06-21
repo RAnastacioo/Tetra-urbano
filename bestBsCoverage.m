@@ -1,8 +1,11 @@
 function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,altAntena)
-passo=200;
+passo=10;
  
 tic
 i=1:passo:size(lat_map(:));
+%% Map Resolution
+fprintf('Resolution of possible antennas = %.2fkm \n',deg2km(distance(lat_map(i(1)),lng_map(i(1)),lat_map(i(2)),lng_map(i(2))),'earth'));
+
 %% visgrid(:,:,indx)
 try
     load (['backup_vigrid_passo_' num2str(passo)]);

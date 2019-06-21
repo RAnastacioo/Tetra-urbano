@@ -2,6 +2,8 @@ clearvars;clc;close all;
 SAMPLES = 512;
 alturaAntena=30;
 load('backup_512.mat');
+%% Map Resolution
+fprintf('Map resolution = %.2fmetros \n',deg2km(distance(lat_map(11),lng_map(11),lat_map(12),lng_map(12)),'earth')*1000);
 
 %% All Line-of-sight 5isibility points in terrain
 latlim = [min(lat_map(:)), max(lat_map(:))];
@@ -11,7 +13,7 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BestBSCoverage
-coverageTarget=20;
+coverageTarget=70;
 [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,alturaAntena);
 
 Prx_dBmBS=NaN(size(lat_map));
@@ -23,15 +25,15 @@ for i=1:length (BS(:,1))
 end
 visgridBS=logical(visgridBS);
 [~,bestServerPixel]=max(Prx_dBmBS,[],3);
-bestServerPixel(~visgridALL)=0;
-figure;
-hm=mesh(lng_map(1,:), lat_map(:,1), elevation_map,bestServerPixel);
-hold on
-title("BestServerPixel");
-xlabel('Latitude (Âº)');
-ylabel('Longitude (Âº)');
-zlabel('Elevation (m)');
-hold off
+bestServerPixel(~visgridALL)=NaN;
+% figure('Name','BestServerPixel');
+% mesh(lng_map(1,:), lat_map(:,1), elevation_map,bestServerPixel);
+% hold on
+% title("BestServerPixel");
+% xlabel('Latitude (Âº)');
+% ylabel('Longitude (Âº)');
+% zlabel('Elevation (m)');
+% hold off
 
 
 %% PRX
@@ -45,27 +47,27 @@ end
 
 
 %% Co-Canal
-Sub=NaN(size(visgridBS(:,:,1)));
-inter=NaN(size(visgridBS(:,:,1)));
-fprintf('-----------------\n\n\n')
-fprintf('Interência Co-Canal (Valor médio)\n')
-fprintf('-----------------\n')
-for i=1:length (BS(:,1))
-    for j=1:length (BS(:,1))
-        if(j~=i)
-            Sub=and(visgridBS(:,:,i),visgridBS(:,:,j));
-            CC=10.^((Prx_dBmBS(:,:,i))./10).*Sub;
-            II=10.^((Prx_dBmBS(:,:,j))./10).*Sub;
-            XX=CC./II;
-            CI_=XX(XX<=1);
-            %           CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
-            CI_m=mean(CI_,'omitnan');
-            fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m);
-        end
-    end
-    fprintf('-----------------\n')
-    inter(:,:,i)=Sub;
-end
+% Sub=NaN(size(visgridBS(:,:,1)));
+% inter=NaN(size(visgridBS(:,:,1)));
+% fprintf('-----------------\n\n\n')
+% fprintf('Interência Co-Canal (Valor médio)\n')
+% fprintf('-----------------\n')
+% for i=1:length (BS(:,1))
+%     for j=1:length (BS(:,1))
+%         if(j~=i)
+%             Sub=and(visgridBS(:,:,i),visgridBS(:,:,j));
+%             CC=10.^((Prx_dBmBS(:,:,i))./10).*Sub;
+%             II=10.^((Prx_dBmBS(:,:,j))./10).*Sub;
+%             XX=CC./II;
+%             CI_=XX(XX<=1);
+%             %           CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
+%             CI_m=mean(CI_,'omitnan');
+%             fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m);
+%         end
+%     end
+%     fprintf('-----------------\n')
+%     inter(:,:,i)=Sub;
+% end
 
 
 %% Coverage Area
@@ -89,20 +91,17 @@ zlabel('Elevation (m)');
 for i=1:length (BS(:,1))
     scatter3(BS(i,1),BS(i,2),BS(i,3)+10,'filled','v','m','SizeData',200);
 end
-
 hold off
 %subplot(1,2,2);
 %imshow('z_Legend.jpg');
 
 %% Antenna Patern Atenuação 3d
-load('Antena400MhzGain13.mat');
-figure('Name','Antenna Patern Atenuação 3D');
-patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle);
+% load('Antena400MhzGain13.mat');
+% figure('Name','Antenna Patern Atenuação 3D');
+% patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle);
 
 %% KML file
 exportKmlBsLocations(BS, 'BsLocations');
+BestServerPixel(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),bestServerPixel,'BestServerPixel');
 AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
 exportKmlBsLoS(BS, 'Los');
-
-%% power image display
-% imagesc(signalColor,[0 255]);
