@@ -5,7 +5,7 @@ Gtx=1; %db
 Grx=1; % dB
 Ptx = 10*log10(100/1e-3); % 100w
 altAntena=30; %metros
-prxMin=-100;
+prxMin=-50;
 
 load('Antena400MhzGain13.mat');
 

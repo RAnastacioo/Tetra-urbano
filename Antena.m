@@ -70,7 +70,7 @@ coverage=round((max(numberOnes/length(lng_map(:)))*100));
 
 
 %% color devision | Plot
-signalColor=colorLegend(Prx_dBm);
+signalColor=colorLegend(Prx_dBmwithPrMin);
 figure('Name',FigName);
 % subplot(1,2,1);
 axis tight
