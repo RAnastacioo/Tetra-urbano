@@ -1,18 +1,16 @@
-function [Prx_dBm,visgrid] = Antena(FigName,Title,BSpoint,elevation_map,lat_map,lng_map,R)
+function [Prx_dBmwithPrMin,visgridwithPrMin] = Antena(FigName,Title,BSpoint,elevation_map,lat_map,lng_map,R)
 PointLong=BSpoint(1,1);
 PointLat=BSpoint(1,2);
 PointAlt=BSpoint(1,3);
 %%Variaveis
 f= 400e6; %Hz
-% c=3e8; %m/s
-% lambda=c/f;%m
 Gtx=1; %db 
 Grx=1; % dB
 Ptx = 10*log10(100/1e-3); % 100w
 altAntena=30; %metros
+prxMin=-50; %dbm
 load('Antena400MhzGain13.mat');
 
-%% LOS
 visgrid=logical(viewshed(elevation_map,R,PointLat,PointLong,altAntena,1));
 
 %% dist
@@ -21,9 +19,8 @@ dist=deg2km(distance(PointLat,PointLong,lat_map,lng_map),'earth');
 dist=sqrt(abs((PointAlt-dist)).^2+(dist.*1000).^2)/1000;
 
 %% HATA "LFS"
-LFS=NaN(size(dist));
-LFS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,PointAlt,elevation_map(visgrid),'URBAN');
-% LFS=PL_Hata_modify(f,dist.*1000,PointAlt,elevation_map,'URBAN');
+LS=NaN(size(dist));
+LS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,PointAlt+altAntena,elevation_map(visgrid),'URBAN');
 
 
 %% 3D pattern antena
@@ -34,7 +31,16 @@ elev1 = round(-elev + 90);
 % az=round(az);
 % elev= round(abs(elev-90));
 at = reshape(Antena400MhzGain13.Attenuation, 360, [])';
-antennaAttenuation = at(elev1 + az1.*181);
+Gtx = at(elev1 + az1.*181);
+
+%% Prx
+Prx_dBm=Ptx+Gtx+Grx-LS;
+Prx_MinLogical=zeros(size(dist));
+Prx_MinLogical(Prx_dBm>prxMin)=1;
+%visgridwithPrMin(:,:,find(i==j))=and(A,visgrid(:,:,find(i==j)));
+visgridwithPrMin(:,:)=and(Prx_MinLogical,visgrid(:,:));
+Prx_dBmwithPrMin=NaN(size(dist));
+Prx_dBmwithPrMin(visgridwithPrMin)=Prx_dBm(visgridwithPrMin);
 
 % LFSssss=NaN(size(dist));
 % tic
@@ -56,8 +62,7 @@ antennaAttenuation = at(elev1 + az1.*181);
 % figure;
 % mesh(lng_map(1,:), lat_map(:,1), elev);
 
-%% Prx
-Prx_dBm=Ptx+antennaAttenuation+Gtx+Grx-LFS;
+
 
 %% Coverage
 numberOnes(:,1)=sum(sum(visgrid));

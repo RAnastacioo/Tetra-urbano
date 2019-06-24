@@ -1,11 +1,19 @@
-function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,altAntena)
-passo=10;
- 
+function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget)
+%%Variaveis
+f= 400e6; %Hz
+Gtx=1; %db
+Grx=1; % dB
+Ptx = 10*log10(100/1e-3); % 100w
+altAntena=30; %metros
+prxMin=-100;
+
+load('Antena400MhzGain13.mat');
+
+passo=2000;
 tic
 i=1:passo:size(lat_map(:));
 %% Map Resolution
 fprintf('Resolution of possible antennas = %.2fkm \n',deg2km(distance(lat_map(i(1)),lng_map(i(1)),lat_map(i(2)),lng_map(i(2))),'earth'));
-
 %% visgrid(:,:,indx)
 try
     load (['backup_vigrid_passo_' num2str(passo)]);
@@ -23,62 +31,60 @@ catch
     s.Format = 'hh:mm:ss';
     fprintf('Duração prevista: %s \n',s);
     for j = i
-        visgrid(:,:,find(i==j))=logical(viewshed(elevation_map,R,lat_map(j),lng_map(j),altAntena,1));
+        %visgrid(:,:,find(i==j))=logical(viewshed(elevation_map,R,lat_map(j),lng_map(j),altAntena,1));
+        visgrid(:,:)=logical(viewshed(elevation_map,R,lat_map(j),lng_map(j),altAntena,1));
+        % dist
+        dist(:,:)=deg2km(distance(lat_map(j),lng_map(j),lat_map,lng_map),'earth');
+        % HATA
+        LS=NaN(size(dist));
+        %LS(visgrid(:,:,find(i==j))) = PL_Hata_modify(f,dist(visgrid(:,:,find(i==j))).*1000,elevation_map(j)+altAntena,elevation_map(visgrid(:,:,find(i==j))),'URBAN');
+        LS(visgrid(:,:)) = PL_Hata_modify(f,dist(visgrid(:,:)).*1000,elevation_map(j)+altAntena,elevation_map(visgrid(:,:)),'URBAN');
+        
+        %% 3D pattern antena
+        %Angle azimuth(lat1,lon1,lat2,lon2)
+        [az,elev,~] = geodetic2aer(lat_map,lng_map,elevation_map,lat_map(j),lng_map(j),(elevation_map(j)+altAntena),wgs84Ellipsoid);
+        az1 = mod(round(az), 359);
+        elev1 = round(-elev + 90);
+        % az=round(az);
+        % elev= round(abs(elev-90));
+        at = reshape(Antena400MhzGain13.Attenuation, 360, [])';
+        Gtx = at(elev1 + az1.*181);  
+        % Prx
+        Prx_dBm(:,:)=Ptx+Gtx+Grx-LS;
+        %Prx_Min
+        Prx_MinLogical=zeros(size(dist));
+        Prx_MinLogical(Prx_dBm>prxMin)=1;
+        %visgridwithPrMin(:,:,find(i==j))=and(A,visgrid(:,:,find(i==j)));
+        visgridwithPrMin(:,:,find(i==j))=and(Prx_MinLogical,visgrid(:,:));
     end
     ss=seconds(round(toc));
     ss.Format = 'hh:mm:ss';
     fprintf('Duração real: %s \n',ss);
-    save(['backup_vigrid_passo_' num2str(passo)],'visgrid', '-v7.3');
+    save(['backup_vigrid_passo_' num2str(passo)],'visgridwithPrMin', '-v7.3');
     
 end
 
 try
     load(['BS_Coverage' num2str(coverageTarget)]);
 catch
+    
     %% Best BS1
-    numberOnes(:,1)=sum(sum(visgrid(:,:,:)));
+    numberOnes(:,1)=sum(sum(visgridwithPrMin(:,:,:)));
     [maax,idxVisgrid1]=max(numberOnes);
     idxMap=i(idxVisgrid1);
     BS(1,:)=[lng_map(idxMap),lat_map(idxMap),elevation_map(idxMap)];
     idxVisgrid(1,1)=idxVisgrid1;
     coverage=(maax/length(lng_map(:)))*100;
+    k= visgridwithPrMin(:,:,idxVisgrid(1,1));
     
-    if(coverage<=coverageTarget)
-        %% Best BS2
-        %obtendo o segundo melhor ponto ignorando pontos de subreposiçao
-        j=~and(visgrid(:,:,idxVisgrid1),visgrid(:,:,:));
-        x=and(j,visgrid(:,:,:));
-        numberOnes2(:,1)=sum(sum(x(:,:,:)));
-        [maax2,idxVisgrid2]=max(numberOnes2);
-        idxMap2=i(idxVisgrid2);
-        BS(2,:)=[lng_map(idxMap2),lat_map(idxMap2),elevation_map(idxMap2)];
-        idxVisgrid(2,1)=idxVisgrid2;
-        coverage=coverage+(maax2/length(lng_map(:)))*100;
-    end
-    
-    if(coverage<=coverageTarget)
-        %% Best BS3
-        %obtendo o segundo melhor ponto ignorando pontos de subreposiçao
-        k=or(visgrid(:,:,idxVisgrid2),visgrid(:,:,idxVisgrid1));
-        j=~and(k,visgrid(:,:,:));
-        x=and(j,visgrid(:,:,:));
-        numberOnes3(:,1)=sum(sum(x(:,:,:)));
-        [maax3,idxVisgrid3]=max(numberOnes3);
-        idxMap3=i(idxVisgrid3);
-        BS(3,:)=[lng_map(idxMap3),lat_map(idxMap3),elevation_map(idxMap3)];
-        coverage=coverage+(maax3/length(lng_map(:)))*100;
-        idxVisgrid(3,1)=idxVisgrid3;
-    end
-   
-    %% Best BS4
+    %% Best BS
     %obtendo o segundo melhor ponto ignorando pontos de subreposiçao
-    ii=3;
+    ii=1;
     while coverage <= coverageTarget
-        k=or(k,visgrid(:,:,idxVisgrid(ii,1)));
+        k=or(k,visgridwithPrMin(:,:,idxVisgrid(ii,1)));
         ii=ii+1;
-        
-        j=~and(k,visgrid(:,:,:));
-        x=and(j,visgrid(:,:,:));
+        j=~and(k,visgridwithPrMin(:,:,:));
+        x=and(j,visgridwithPrMin(:,:,:));
         numberOnes(:,1)=sum(sum(x(:,:,:)));
         [maax,idxVisgridd]=max(numberOnes);
         idxMap=i(idxVisgridd);
@@ -87,6 +93,32 @@ catch
         idxVisgrid(ii,1)=idxVisgridd;
         coverage=coverage+coveragee;
     end
+    
+    
+    %     %% Best BS1
+    %     numberOnes(:,1)=sum(sum(visgrid(:,:,:)));
+    %     [maax,idxVisgrid1]=max(numberOnes);
+    %     idxMap=i(idxVisgrid1);
+    %     BS(1,:)=[lng_map(idxMap),lat_map(idxMap),elevation_map(idxMap)];
+    %     idxVisgrid(1,1)=idxVisgrid1;
+    %     coverage=(maax/length(lng_map(:)))*100;
+    %     k= visgrid(:,:,idxVisgrid(1,1));
+    %
+    %     %% Best BS
+    %     %obtendo o segundo melhor ponto ignorando pontos de subreposiçao
+    %     ii=1;
+    %     while coverage <= coverageTarget
+    %         k=or(k,visgrid(:,:,idxVisgrid(ii,1)));
+    %         ii=ii+1;
+    %         j=~and(k,visgrid(:,:,:));
+    %         x=and(j,visgrid(:,:,:));
+    %         numberOnes(:,1)=sum(sum(x(:,:,:)));
+    %         [maax,idxVisgridd]=max(numberOnes);
+    %         idxMap=i(idxVisgridd);
+    %         coveragee=(maax/length(lng_map(:)))*100;
+    %         BS(ii,:)=[lng_map(idxMap),lat_map(idxMap),elevation_map(idxMap)];
+    %         idxVisgrid(ii,1)=idxVisgridd;
+    %         coverage=coverage+coveragee;
+    %     end
     save(['BS_Coverage' num2str(coverageTarget)],'BS', '-v7.3');
-end
 end
