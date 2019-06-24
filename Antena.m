@@ -8,7 +8,7 @@ Gtx=1; %db
 Grx=1; % dB
 Ptx = 10*log10(100/1e-3); % 100w
 altAntena=30; %metros
-prxMin=-50; %dbm
+prxMin=-90; %dbm
 load('Antena400MhzGain13.mat');
 
 visgrid=logical(viewshed(elevation_map,R,PointLat,PointLong,altAntena,1));
