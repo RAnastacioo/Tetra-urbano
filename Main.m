@@ -1,6 +1,12 @@
 clearvars;clc;close all;
 SAMPLES = 512;
-alturaAntena=30;
+%%Variaveis
+f= 400e6; %Hz
+Gtx=1; %db
+Grx=1; % dB
+Ptx=100;%w
+altAntena=30; %metros
+prxMin=-90;
 load('backup_512.mat');
 %% Map Resolution
 fprintf('Map resolution = %.2fmetros \n',deg2km(distance(lat_map(11),lng_map(11),lat_map(12),lng_map(12)),'earth')*1000);
@@ -14,12 +20,12 @@ R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
 %% BestBSCoverage
 coverageTarget=75;
-[BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget);
+[BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,f,Gtx,Grx,Ptx,altAntena,prxMin);
 Prx_dBmBS=NaN(size(lat_map));
 visgridBS=NaN(size(lat_map));
 visgridALL=zeros(size(lat_map));
 for i=1:length (BS(:,1))
-    [Prx_dBmBS(:,:,i),visgridBS(:,:,i)]=Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R);
+    [Prx_dBmBS(:,:,i),visgridBS(:,:,i)] = Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R,f,Gtx,Grx,Ptx,altAntena,prxMin);
     visgridALL=or (visgridALL,visgridBS(:,:,i));
 end
 visgridBS=logical(visgridBS);
@@ -95,12 +101,12 @@ hold off
 %imshow('z_Legend.jpg');
 
 %% Antenna Patern Atenuação 3d
-% load('Antena400MhzGain13.mat');
-% figure('Name','Antenna Patern Atenuação 3D');
-% patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle);
+load('Antena400MhzGain13.mat');
+figure('Name','Antenna Patern Atenuação 3D');
+patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle);
 
 %% KML file
-% exportKmlBsLocations(BS, 'BsLocations');
-% BestServerPixel(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),bestServerPixel,'BestServerPixel');
-% AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
-% exportKmlBsLoS(BS, 'Los');
+exportKmlBsLocations(BS, 'BsLocations');
+BestServerPixel(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),bestServerPixel,'BestServerPixel');
+AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
+exportKmlBsLoS(BS, 'Los');

@@ -1,22 +1,14 @@
-function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget)
-%%Variaveis
-f= 400e6; %Hz
-Gtx=1; %db
-Grx=1; % dB
-Ptx = 10*log10(100/1e-3); % 100w
-altAntena=30; %metros
-prxMin=-90;
-
+function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,f,Gtx,Grx,ptx,altAntena,prxMin)
 load('Antena400MhzGain13.mat');
-
-passo=2000;
+passo=3000;
+Ptxdb = 10*log10(ptx/1e-3); % 100w
 tic
 i=1:passo:size(lat_map(:));
 %% Map Resolution
 fprintf('Resolution of possible antennas = %.2fkm \n',deg2km(distance(lat_map(i(1)),lng_map(i(1)),lat_map(i(2)),lng_map(i(2))),'earth'));
 %% visgrid(:,:,indx)
 try
-    load (['backup_vigrid_passo_' num2str(passo)]);
+    load (['backup-' num2str(passo) '-' num2str(altAntena) '-' num2str(prxMin) '-' num2str(Gtx) '-' num2str(Grx)  '-' num2str(ptx)]);
 catch
     figure;
     mesh(lng_map(1,:), lat_map(:,1), elevation_map);
@@ -38,9 +30,8 @@ catch
         % HATA
         LS=NaN(size(dist));
         %LS(visgrid(:,:,find(i==j))) = PL_Hata_modify(f,dist(visgrid(:,:,find(i==j))).*1000,elevation_map(j)+altAntena,elevation_map(visgrid(:,:,find(i==j))),'URBAN');
-        LS(visgrid(:,:)) = PL_Hata_modify(f,dist(visgrid(:,:)).*1000,elevation_map(j)+altAntena,elevation_map(visgrid(:,:)),'URBAN');
-        
-        %% 3D pattern antena
+        LS(visgrid(:,:)) = PL_Hata_modify(f,dist(visgrid(:,:)).*1000,elevation_map(j)+altAntena,elevation_map(visgrid(:,:)),'URBAN');       
+        % 3D pattern antena
         %Angle azimuth(lat1,lon1,lat2,lon2)
         [az,elev,~] = geodetic2aer(lat_map,lng_map,elevation_map,lat_map(j),lng_map(j),(elevation_map(j)+altAntena),wgs84Ellipsoid);
         az1 = mod(round(az), 359);
@@ -48,9 +39,9 @@ catch
         % az=round(az);
         % elev= round(abs(elev-90));
         at = reshape(Antena400MhzGain13.Attenuation, 360, [])';
-        Gtx = at(elev1 + az1.*181);  
+        Gtx1 = at(elev1 + az1.*181);  
         % Prx
-        Prx_dBm(:,:)=Ptx+Gtx+Grx-LS;
+        Prx_dBm(:,:)=Ptxdb+Gtx+Gtx1+Grx-LS;
         %Prx_Min
         Prx_MinLogical=zeros(size(dist));
         Prx_MinLogical(Prx_dBm>prxMin)=1;
@@ -60,12 +51,13 @@ catch
     ss=seconds(round(toc));
     ss.Format = 'hh:mm:ss';
     fprintf('Duração real: %s \n',ss);
-    save(['backup_vigrid_passo_' num2str(passo)],'visgridwithPrMin', '-v7.3');
+    %passo|altAntena|prxMin|Gtx|Grx|ptx
+    save(['backup-' num2str(passo) '-' num2str(altAntena) '-' num2str(prxMin) '-' num2str(Gtx) '-' num2str(Grx)  '-' num2str(ptx)],'visgridwithPrMin', '-v7.3');
     
 end
 
 try
-    load(['BS_Coverage' num2str(coverageTarget)]);
+load(['BS_Coverage' num2str(coverageTarget) '-' num2str(passo) '-' num2str(altAntena) '-' num2str(prxMin) '-' num2str(Gtx) '-' num2str(Grx)  '-' num2str(ptx)]);
 catch
     
     %% Best BS1
@@ -120,5 +112,6 @@ catch
     %         idxVisgrid(ii,1)=idxVisgridd;
     %         coverage=coverage+coveragee;
     %     end
-    save(['BS_Coverage' num2str(coverageTarget)],'BS', '-v7.3');
+    
+    save(['BS_Coverage' num2str(coverageTarget) '-' num2str(passo) '-' num2str(altAntena) '-' num2str(prxMin) '-' num2str(Gtx) '-' num2str(Grx)  '-' num2str(ptx)],'BS', '-v7.3');
 end
