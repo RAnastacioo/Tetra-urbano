@@ -1,16 +1,10 @@
-function [Prx_dBmwithPrMin,visgridwithPrMin] = Antena(FigName,Title,BSpoint,elevation_map,lat_map,lng_map,R)
+function [Prx_dBmwithPrMin,visgridwithPrMin] = Antena(FigName,Title,BSpoint,elevation_map,lat_map,lng_map,R,f,Gtx1,Grx,Ptx,altAntena,prxMin)
 PointLong=BSpoint(1,1);
 PointLat=BSpoint(1,2);
 PointAlt=BSpoint(1,3);
-%%Variaveis
-f= 400e6; %Hz
-Gtx=1; %db 
-Grx=1; % dB
-Ptx = 10*log10(100/1e-3); % 100w
-altAntena=30; %metros
-prxMin=-90; %dbm
-load('Antena400MhzGain13.mat');
 
+load('Antena400MhzGain13.mat');
+Ptxdb = 10*log10(Ptx/1e-3); % 100w
 visgrid=logical(viewshed(elevation_map,R,PointLat,PointLong,altAntena,1));
 
 %% dist
@@ -34,7 +28,7 @@ at = reshape(Antena400MhzGain13.Attenuation, 360, [])';
 Gtx = at(elev1 + az1.*181);
 
 %% Prx
-Prx_dBm=Ptx+Gtx+Grx-LS;
+Prx_dBm=Ptxdb+Gtx+Gtx1+Grx-LS;
 Prx_MinLogical=zeros(size(dist));
 Prx_MinLogical(Prx_dBm>prxMin)=1;
 %visgridwithPrMin(:,:,find(i==j))=and(A,visgrid(:,:,find(i==j)));
