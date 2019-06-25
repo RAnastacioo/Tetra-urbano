@@ -7,9 +7,11 @@ Grx=1; % dB
 Ptx=100;%w
 altAntena=30; %metros
 prxMin=-90;
-coverageTarget=90;
-passo=4000;
+coverageTarget=70;
+passo=3000; %O aumento do passo reduz a resolução do estudo escolher preferencial mente valores entre (1 e 1000)
 load('backup_512.mat');
+plotIndividualAntenna = false;
+plotAllAntennas=true;
 
 %% Map Resolution
 fprintf('Map resolution = %.2fmetros \n',deg2km(distance(lat_map(11),lng_map(11),lat_map(12),lng_map(12)),'earth')*1000);
@@ -43,15 +45,44 @@ Prx_dBmBS=NaN(size(lat_map));
 visgridBS=NaN(size(lat_map));
 visgridALL=zeros(size(lat_map));
 for i=1:length (BS(:,1))
-    [Prx_dBmBS(:,:,i),visgridBS(:,:,i)] = Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R,f,Gtx,Grx,Ptx,altAntena,prxMin);
+    [Prx_dBmBS(:,:,i),visgridBS(:,:,i)] = Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R,f,Gtx,Grx,Ptx,altAntena,prxMin,plotIndividualAntenna);
     visgridALL=or (visgridALL,visgridBS(:,:,i));
+end
+
+
+if(plotAllAntennas)
+    %% All antennas
+    N = length (BS(:,1));
+    figure('Name','All antennas on the ground');
+    nS   = sqrt(N);
+    nCol = ceil(nS);
+    nRow = nCol - (nCol * nCol - N > nCol - 1);
+    for k = 1:N
+        subplot(nRow, nCol, k);
+        %Coverage
+        numberOnes(:,1)=sum(sum(visgridBS(:,:,k)));
+        coverage=round((max(numberOnes/length(lng_map(:)))*100));
+        % color devision | Plot
+        signalColor=colorLegend(Prx_dBmBS(:,:,k));
+        axis tight
+        mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
+        hold on
+        title(strcat(['BS',num2str(k),' - Coverage: ',num2str(coverage),'%']));
+        xlabel('Latitude (º)');
+        ylabel('Longitude (º)');
+        zlabel('Elevation (m)');
+        scatter3(BS(k,1),BS(k,2),BS(k,3)+altAntena,'filled','v','m','SizeData',200);
+        hold off
+    end
+    fig.WindowState = 'maximized';
 end
 visgridBS=logical(visgridBS);
 %% BestBSCoverage
 [~,bestServerPixel]=max(Prx_dBmBS,[],3);
 bestServerPixel(~visgridALL)=NaN;
 
-figure('Name','BestServerPixel');
+fig=figure('Name','BestServerPixel');
+fig.WindowState = 'maximized';
 surf(lng_map(1,:), lat_map(:,1), elevation_map,'DisplayName','','HandleVisibility','off');
 hold on
 for i=1:length (BS(:,1))
@@ -103,7 +134,8 @@ coverageTotal=round((max(numberOnes/length(lng_map(:)))*100));
 signalColor=colorLegend(Prx_dBm);
 
 %% Displays the data
-figure('Name','Todas as BS');
+fig=figure('Name','Todas as BS');
+fig.WindowState = 'maximized';
 subplot(1,2,1);
 axis tight
 mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
@@ -121,7 +153,8 @@ imshow('z_Legend.jpg');
 
 %% Antenna Patern Atenuação 3d
 load('Antena400MhzGain13.mat');
-figure('Name','Antenna Patern Atenuação 3D');
+fig=figure('Name','Antenna Patern Atenuação 3D');
+fig.WindowState = 'maximized';
 patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle);
 
 %% KML file

@@ -9,7 +9,8 @@ MapResolution=['Map resolution = ',num2str(round((deg2km(distance(lat_map(1),lng
 % fprintf('Resolution of possible antennas = %.2fmetros \n',deg2km(distance(lat_map(i(1)),lng_map(i(1)),lat_map(i(2)),lng_map(i(2))),'earth'));
 AntenasResolution=['Antena resolution = ',num2str(round((deg2km(distance(lat_map(i(1)),lng_map(i(1)),lat_map(i(2)),lng_map(i(2))),'earth')*1000),2)),'metros'];
 
-figure('Name','Antenas em estudo');
+fig=figure('Name','Antenas em estudo');
+fig.WindowState = 'maximized';
 mesh(lng_map(1,:), lat_map(:,1), elevation_map);
 title({'Antenas consideradas para estudo',MapResolution,AntenasResolution});
 hold on

@@ -1,9 +1,10 @@
 
 function [BScoordinates] = getpts3d(lat_map,lng_map,elevation_map)
 fig = figure;
+fig.WindowState = 'maximized';
 mesh(lng_map,lat_map,elevation_map);
 hold on
-title({'choose your base stations','Click display to create a data tip, press shift+mouseleft for any points, then press "Return"'});
+title({'Choose your base stations','Click display to create a data tip, press shift+mouseleft for any points, then press "Return"'});
 xlabel('Latitude (º)');
 ylabel('Longitude (º)');
 zlabel('Elevation (m)');

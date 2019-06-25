@@ -1,4 +1,4 @@
-function [Prx_dBmwithPrMin,visgridwithPrMin] = Antena(FigName,Title,BSpoint,elevation_map,lat_map,lng_map,R,f,Gtx1,Grx,Ptx,altAntena,prxMin)
+function [Prx_dBmwithPrMin,visgridwithPrMin] = Antena(FigName,Title,BSpoint,elevation_map,lat_map,lng_map,R,f,Gtx1,Grx,Ptx,altAntena,prxMin,plotIndividualAntenna)
 PointLong=BSpoint(1,1);
 PointLat=BSpoint(1,2);
 PointAlt=BSpoint(1,3);
@@ -57,25 +57,24 @@ Prx_dBmwithPrMin(visgridwithPrMin)=Prx_dBm(visgridwithPrMin);
 % mesh(lng_map(1,:), lat_map(:,1), elev);
 
 
-
-%% Coverage
-numberOnes(:,1)=sum(sum(visgrid));
-coverage=round((max(numberOnes/length(lng_map(:)))*100));
-
-
-%% color devision | Plot
-signalColor=colorLegend(Prx_dBmwithPrMin);
-figure('Name',FigName);
-% subplot(1,2,1);
-axis tight
-mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
-hold on
-title(strcat(Title,[' - Coverage: ',num2str(coverage),'%']));
-xlabel('Latitude (º)');
-ylabel('Longitude (º)');
-zlabel('Elevation (m)');
-scatter3(PointLong,PointLat,PointAlt+altAntena,'filled','v','m','SizeData',200);
-% subplot(1,2,2);
-% imshow('z_Legend.jpg');
-hold off
+if(plotIndividualAntenna)
+    %% Coverage
+    numberOnes(:,1)=sum(sum(visgrid));
+    coverage=round((max(numberOnes/length(lng_map(:)))*100));
+    %% color devision | Plot
+    signalColor=colorLegend(Prx_dBmwithPrMin);
+    figure('Name',FigName);
+    subplot(1,2,1);
+    axis tight
+    mesh(lng_map(1,:), lat_map(:,1), elevation_map,signalColor);
+    hold on
+    title(strcat(Title,[' - Coverage: ',num2str(coverage),'%']));
+    xlabel('Latitude (º)');
+    ylabel('Longitude (º)');
+    zlabel('Elevation (m)');
+    scatter3(PointLong,PointLat,PointAlt+altAntena,'filled','v','m','SizeData',200);
+    subplot(1,2,2);
+    imshow('z_Legend.jpg');
+    hold off
+end
 end
