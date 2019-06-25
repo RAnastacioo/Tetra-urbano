@@ -8,7 +8,7 @@ Ptx=100;%w
 altAntena=30; %metros
 prxMin=-90;
 coverageTarget=95;
-passo=10;
+passo=3000;
 load('backup_512.mat');
 
 %% Map Resolution
