@@ -7,7 +7,7 @@ Grx=1; % dB
 Ptx=100;%w
 altAntena=30; %metros
 prxMin=-90;
-coverageTarget=95;
+coverageTarget=90;
 passo=4000;
 load('backup_512.mat');
 
@@ -21,8 +21,24 @@ rasterSize = size(elevation_map);
 %GEOREFCELLS Reference raster cells to geographic coordinates
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 
-%% BestBSCoverage
-[BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,passo,coverageTarget,f,Gtx,Grx,Ptx,altAntena,prxMin);
+while (true)
+    disp('Choose the mode of placement of antennas between manual or automatic.')
+    str = input('Insert manual or auto -> ','s');
+    str = lower(str);
+    switch str
+        case 'manual'
+            disp('Manual mode')
+            [BS] = getpts3d(lat_map,lng_map,elevation_map);
+            break;
+        case 'auto'
+             disp('Automatic mode')
+            [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,passo,coverageTarget,f,Gtx,Grx,Ptx,altAntena,prxMin);
+             break;
+        otherwise
+            disp('It is necessary to choose the operating mode')
+    end
+end
+
 Prx_dBmBS=NaN(size(lat_map));
 visgridBS=NaN(size(lat_map));
 visgridALL=zeros(size(lat_map));
@@ -31,6 +47,7 @@ for i=1:length (BS(:,1))
     visgridALL=or (visgridALL,visgridBS(:,:,i));
 end
 visgridBS=logical(visgridBS);
+%% BestBSCoverage
 [~,bestServerPixel]=max(Prx_dBmBS,[],3);
 bestServerPixel(~visgridALL)=NaN;
 
