@@ -52,7 +52,7 @@ end
 
 if(plotAllAntennas)
     %% All antennas
-    N = length (BS(:,1));
+    N = length (BS(:,1))+1;
     figure('Name','All antennas on the ground');
     nS   = sqrt(N);
     nCol = ceil(nS);
