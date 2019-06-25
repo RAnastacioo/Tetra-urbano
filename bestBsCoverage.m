@@ -1,6 +1,5 @@
-function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,coverageTarget,f,Gtx,Grx,ptx,altAntena,prxMin)
+function [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,passo,coverageTarget,f,Gtx,Grx,ptx,altAntena,prxMin)
 load('Antena400MhzGain13.mat');
-passo=3000;
 Ptxdb = 10*log10(ptx/1e-3); % 100w
 tic
 i=1:passo:size(lat_map(:));
@@ -10,8 +9,9 @@ fprintf('Resolution of possible antennas = %.2fkm \n',deg2km(distance(lat_map(i(
 try
     load (['backup-' num2str(passo) '-' num2str(altAntena) '-' num2str(prxMin) '-' num2str(Gtx) '-' num2str(Grx)  '-' num2str(ptx)]);
 catch
-    figure;
+    figure('Name','Antenas em estudo');
     mesh(lng_map(1,:), lat_map(:,1), elevation_map);
+    title('Antenas consideradas para estudo');
     hold on
     plot3(lng_map(i),lat_map(i),elevation_map(i),'r.','markersize',10);
     hold off
