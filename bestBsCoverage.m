@@ -4,18 +4,23 @@ Ptxdb = 10*log10(ptx/1e-3); % 100w
 tic
 i=1:passo:size(lat_map(:));
 %% Map Resolution
-fprintf('Resolution of possible antennas = %.2fkm \n',deg2km(distance(lat_map(i(1)),lng_map(i(1)),lat_map(i(2)),lng_map(i(2))),'earth'));
+% fprintf('Map resolution = %.2fmetros \n',deg2km(distance(lat_map(1),lng_map(1),lat_map(2),lng_map(2)),'earth')*1000);
+MapResolution=['Map resolution = ',num2str(round((deg2km(distance(lat_map(1),lng_map(1),lat_map(2),lng_map(2)),'earth')*1000),2)),'metros'];
+% fprintf('Resolution of possible antennas = %.2fmetros \n',deg2km(distance(lat_map(i(1)),lng_map(i(1)),lat_map(i(2)),lng_map(i(2))),'earth'));
+AntenasResolution=['Antena resolution = ',num2str(round((deg2km(distance(lat_map(i(1)),lng_map(i(1)),lat_map(i(2)),lng_map(i(2))),'earth')*1000),2)),'metros'];
+
+figure('Name','Antenas em estudo');
+mesh(lng_map(1,:), lat_map(:,1), elevation_map);
+title({'Antenas consideradas para estudo',MapResolution,AntenasResolution});
+hold on
+plot3(lng_map(i),lat_map(i),elevation_map(i),'r.','markersize',10);
+hold off
+
 %% visgrid(:,:,indx)
 try
     load (['backup-' num2str(passo) '-' num2str(altAntena) '-' num2str(prxMin) '-' num2str(Gtx) '-' num2str(Grx)  '-' num2str(ptx)]);
 catch
-    figure('Name','Antenas em estudo');
-    mesh(lng_map(1,:), lat_map(:,1), elevation_map);
-    title('Antenas consideradas para estudo');
-    hold on
-    plot3(lng_map(i),lat_map(i),elevation_map(i),'r.','markersize',10);
-    hold off
-    pause(2);
+    
     tic
     viewshed(elevation_map,R,lat_map(256),lng_map(256),9999999,1);
     maxVisgridTime=toc;
@@ -30,7 +35,7 @@ catch
         % HATA
         LS=NaN(size(dist));
         %LS(visgrid(:,:,find(i==j))) = PL_Hata_modify(f,dist(visgrid(:,:,find(i==j))).*1000,elevation_map(j)+altAntena,elevation_map(visgrid(:,:,find(i==j))),'URBAN');
-        LS(visgrid(:,:)) = PL_Hata_modify(f,dist(visgrid(:,:)).*1000,elevation_map(j)+altAntena,elevation_map(visgrid(:,:)),'URBAN');       
+        LS(visgrid(:,:)) = PL_Hata_modify(f,dist(visgrid(:,:)).*1000,elevation_map(j)+altAntena,elevation_map(visgrid(:,:)),'URBAN');
         % 3D pattern antena
         %Angle azimuth(lat1,lon1,lat2,lon2)
         [az,elev,~] = geodetic2aer(lat_map,lng_map,elevation_map,lat_map(j),lng_map(j),(elevation_map(j)+altAntena),wgs84Ellipsoid);
@@ -39,7 +44,7 @@ catch
         % az=round(az);
         % elev= round(abs(elev-90));
         at = reshape(Antena400MhzGain13.Attenuation, 360, [])';
-        Gtx1 = at(elev1 + az1.*181);  
+        Gtx1 = at(elev1 + az1.*181);
         % Prx
         Prx_dBm(:,:)=Ptxdb+Gtx+Gtx1+Grx-LS;
         %Prx_Min
@@ -57,7 +62,7 @@ catch
 end
 
 try
-load(['BS_Coverage' num2str(coverageTarget) '-' num2str(passo) '-' num2str(altAntena) '-' num2str(prxMin) '-' num2str(Gtx) '-' num2str(Grx)  '-' num2str(ptx)]);
+    load(['BS_Coverage' num2str(coverageTarget) '-' num2str(passo) '-' num2str(altAntena) '-' num2str(prxMin) '-' num2str(Gtx) '-' num2str(Grx)  '-' num2str(ptx)]);
 catch
     
     %% Best BS1
