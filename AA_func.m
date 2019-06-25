@@ -90,8 +90,6 @@ fprintf(fid_write,'       </ScreenOverlay>\n');
 fprintf(fid_write,'  </Folder>\n');
 fprintf(fid_write,'</kml>\n');
 fclose(fid_write);
-%  winopen(strcat(FILE_NAME,'.kml'))
-
 
 if ismac
     % Code to run on Mac plaform
