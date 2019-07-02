@@ -49,10 +49,9 @@ for i=1:length (BS(:,1))
     visgridALL=or (visgridALL,visgridBS(:,:,i));
 end
 
-
-if(plotAllAntennas)
+ N = length (BS(:,1));
+if(plotAllAntennas || N>20)
     %% All antennas
-    N = length (BS(:,1));
     figure('Name','All antennas on the ground');
     nS   = sqrt(N);
     nCol = ceil(nS);

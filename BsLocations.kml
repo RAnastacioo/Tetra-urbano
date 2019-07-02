@@ -4,7 +4,7 @@
 		<name>BsLocations</name>
 		<Placemark>
 			<Point>
-				<coordinates>-8.6122941,41.1738713,0</coordinates>
+				<coordinates>-8.5975205,41.1580496,0</coordinates>
 			</Point>
 			<Style>
 				<IconStyle>
@@ -17,7 +17,7 @@
 		</Placemark>
 		<Placemark>
 			<Point>
-				<coordinates>-8.5933536,41.1608635,0</coordinates>
+				<coordinates>-8.6066120,41.1659885,0</coordinates>
 			</Point>
 			<Style>
 				<IconStyle>
@@ -30,7 +30,7 @@
 		</Placemark>
 		<Placemark>
 			<Point>
-				<coordinates>-8.6062332,41.1664954,0</coordinates>
+				<coordinates>-8.5842622,41.1757226,0</coordinates>
 			</Point>
 			<Style>
 				<IconStyle>
