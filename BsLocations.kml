@@ -4,12 +4,12 @@
 		<name>BsLocations</name>
 		<Placemark>
 			<Point>
-				<coordinates>-8.5975205,41.1580496,0</coordinates>
+				<coordinates>-8.6157034,41.1627247,0</coordinates>
 			</Point>
 			<Style>
 				<IconStyle>
 					<Icon>
-						<href>C:\Users\ricar\Desktop\ComMoveis\Tetra_urbano\antenna.png</href>
+						<href>C:\Users\SkullsHunter\Documents\GitHub\Tetra-urbano\antenna.png</href>
 					</Icon>
 				</IconStyle>
 			</Style>
@@ -17,12 +17,12 @@
 		</Placemark>
 		<Placemark>
 			<Point>
-				<coordinates>-8.6066120,41.1659885,0</coordinates>
+				<coordinates>-8.6645699,41.1573147,0</coordinates>
 			</Point>
 			<Style>
 				<IconStyle>
 					<Icon>
-						<href>C:\Users\ricar\Desktop\ComMoveis\Tetra_urbano\antenna.png</href>
+						<href>C:\Users\SkullsHunter\Documents\GitHub\Tetra-urbano\antenna.png</href>
 					</Icon>
 				</IconStyle>
 			</Style>
@@ -30,12 +30,12 @@
 		</Placemark>
 		<Placemark>
 			<Point>
-				<coordinates>-8.5842622,41.1757226,0</coordinates>
+				<coordinates>-8.5912702,41.1654219,0</coordinates>
 			</Point>
 			<Style>
 				<IconStyle>
 					<Icon>
-						<href>C:\Users\ricar\Desktop\ComMoveis\Tetra_urbano\antenna.png</href>
+						<href>C:\Users\SkullsHunter\Documents\GitHub\Tetra-urbano\antenna.png</href>
 					</Icon>
 				</IconStyle>
 			</Style>

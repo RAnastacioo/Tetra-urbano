@@ -15,22 +15,22 @@ dist=deg2km(distance(PointLat,PointLong,lat_map,lng_map),'earth');
 dist=sqrt(abs((PointAlt-dist)).^2+(dist.*1000).^2)/1000;
 
 %% MODEL "LFS"
- LS=NaN(size(dist));
 if model==1
-    LS(visgrid)=PL_free(f,dist(visgrid),Gt,Gr);
+    
 end
 if model==2
-    LS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,PointAlt+altAntena,elevation_map(visgrid),'URBAN');
-end
-if model==3
-    LS(visgrid)=PL_IEEE80216d(f,dist(visgrid).*1000,type,PointAlt+altAntena,elevation_map(visgrid),'Okumura','MOD');
+        
+else
+        
 end
     
+
+LS=NaN(size(dist));
 % LS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,PointAlt+altAntena,elevation_map(visgrid),'URBAN');
-% LS(visgrid)=PL_free(f,dist(visgrid),Gt,Gr);
-% 
-% 
-% LS(visgrid)=PL_IEEE80216d(f,dist(visgrid).*1000,type,PointAlt+altAntena,elevation_map(visgrid),'Okumura','MOD');
+LS(visgrid)=PL_free(f,dist(visgrid),Gt,Gr);
+
+
+LS(visgrid)=PL_IEEE80216d(f,dist(visgrid).*1000,type,PointAlt+altAntena,elevation_map(visgrid),'Okumura','MOD');
 %% 3D pattern antena
 %Angle azimuth(lat1,lon1,lat2,lon2)
 [az,elev,~] = geodetic2aer(lat_map,lng_map,elevation_map,PointLat,PointLong,(PointAlt+altAntena),wgs84Ellipsoid);

@@ -12,7 +12,7 @@ passo=3000; %O aumento do passo reduz a resolução do estudo escolher preferencia
 load('backup_512.mat');
 plotIndividualAntenna = false;
 plotAllAntennas=true;
-
+type='A';
 %% Map Resolution
 fprintf('Map resolution = %.2fmetros \n',deg2km(distance(lat_map(11),lng_map(11),lat_map(12),lng_map(12)),'earth')*1000);
 
@@ -33,11 +33,58 @@ while (true)
             [BS] = getpts3d(lat_map,lng_map,elevation_map);
             break;
         case 'auto'
-             disp('Automatic mode')
+            disp('Automatic mode')
             [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,passo,coverageTarget,f,Gtx,Grx,Ptx,altAntena,prxMin);
-             break;
+            break;
         otherwise
             disp('It is necessary to choose the operating mode')
+    end
+end
+while (true)
+    disp('Choose radio propagation model for predicting the path loss')
+    disp('1 - Free Path Loss \n');
+    disp('2 - Okumura/Hata \n');
+    disp('3 - IEEE 802.16d \n');
+    str = input('Insert 1, 2 or 3 -> ','s');
+    str = lower(str);
+    switch str
+        case '1'
+            disp(' Free Path Loss')
+            model=1;
+            break;
+        case '2'
+            disp('Okumura/Hata')
+            model=2;
+            break;
+        case '3'
+            disp('IEEE 802.16d')
+            model=3;
+            while (true)
+                disp('Choose the TYPE')
+                disp('A - for hilly terrain with moderate-to-heavy tree densities \n');
+                disp('B - for intermediate path loss conditions \n');
+                disp('C - for flat terrain with light tree densities \n');
+                str = input('Insert A, B or C -> ','s');
+                str = lower(str);
+                switch str
+                    case 'a'
+                        disp('TYPE A')
+                        type='A';
+                        break;
+                    case 'b'
+                        disp('TYPE B')
+                        type='B';
+                        break;
+                    case 'c'
+                        disp('TYPE C')
+                        type='C';
+                    otherwise
+                        disp('It is necessary to choose the TYPE')
+                end
+            end
+            break;
+        otherwise
+            disp('It is necessary to choose the model')
     end
 end
 
@@ -45,11 +92,11 @@ Prx_dBmBS=NaN(size(lat_map));
 visgridBS=NaN(size(lat_map));
 visgridALL=zeros(size(lat_map));
 for i=1:length (BS(:,1))
-    [Prx_dBmBS(:,:,i),visgridBS(:,:,i)] = Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R,f,Gtx,Grx,Ptx,altAntena,prxMin,plotIndividualAntenna);
+    [Prx_dBmBS(:,:,i),visgridBS(:,:,i)] = Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R,f,Gtx,Grx,Ptx,altAntena,prxMin,plotIndividualAntenna,model,type);
     visgridALL=or (visgridALL,visgridBS(:,:,i));
 end
 
- N = length (BS(:,1));
+N = length (BS(:,1));
 if(plotAllAntennas || N>20)
     %% All antennas
     figure('Name','All antennas on the ground');
@@ -86,9 +133,11 @@ surf(lng_map(1,:), lat_map(:,1), elevation_map,'DisplayName','','HandleVisibilit
 hold on
 for i=1:length (BS(:,1))
     str=['BS',num2str(i)];
-    plot3(lng_map(bestServerPixel==i),lat_map(bestServerPixel==i),elevation_map(bestServerPixel==i),'.','DisplayName',str);
+    plot3(lng_map(bestServerPixel==i),lat_map(bestServerPixel==i),elevation_map(bestServerPixel==i),'*','DisplayName',str);
 end
-legend;
+lgd=legend;
+lgd.FontSize = 14;
+lgd;
 title('BestServerPixel');
 hold off
 
@@ -104,7 +153,7 @@ end
 %% Co-Canal
 Sub=NaN(size(visgridBS(:,:,1)));
 CoCanal = "-----------------";
-CoCanal = [CoCanal ; "Interência Co-Canal (Valor médio)"];
+CoCanal = [CoCanal ; "Co-channel interference (Mean Value)"];
 CoCanal = [CoCanal ; "-----------------"];
 for i=1:length (BS(:,1))
     for j=1:length (BS(:,1))
@@ -116,7 +165,7 @@ for i=1:length (BS(:,1))
             CI_=XX(XX<=1);
             %           CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
             CI_m=round(mean(CI_,'omitnan'),2);
-            CoCanal = [CoCanal ; 'BS',num2str(i) 'c/ BS',num2str(j) '=',num2str(CI_m)];
+            CoCanal = [CoCanal ; 'BS',num2str(i) 'with BS',num2str(j) '=',num2str(CI_m)];
             %             fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m);
         end
     end
@@ -133,7 +182,7 @@ coverageTotal=round((max(numberOnes/length(lng_map(:)))*100));
 signalColor=colorLegend(Prx_dBm);
 
 %% Displays the data
-fig=figure('Name','Todas as BS');
+fig=figure('Name','ALL BS');
 fig.WindowState = 'maximized';
 subplot(1,2,1);
 axis tight
