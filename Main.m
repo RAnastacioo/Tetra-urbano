@@ -22,7 +22,7 @@ lonlim = [min(lng_map(:)), max(lng_map(:))];
 rasterSize = size(elevation_map);
 %GEOREFCELLS Reference raster cells to geographic coordinates
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
-
+disp('------------------------------------')
 while (true)
     disp('Choose the mode of placement of antennas between manual or automatic.')
     str = input('Insert manual or auto -> ','s');
@@ -40,6 +40,7 @@ while (true)
             disp('It is necessary to choose the operating mode')
     end
 end
+disp('------------------------------------')
 while (true)
     disp('Choose radio propagation model for predicting the path loss')
     disp('1 - Free Path Loss \n');
@@ -57,8 +58,10 @@ while (true)
             model=2;
             break;
         case '3'
+         
             disp('IEEE 802.16d')
             model=3;
+            disp('------------------------------------')
             while (true)
                 disp('Choose the TYPE')
                 disp('A - for hilly terrain with moderate-to-heavy tree densities \n');
@@ -87,7 +90,7 @@ while (true)
             disp('It is necessary to choose the model')
     end
 end
-
+disp('------------------------------------')
 Prx_dBmBS=NaN(size(lat_map));
 visgridBS=NaN(size(lat_map));
 visgridALL=zeros(size(lat_map));
@@ -152,9 +155,9 @@ end
 
 %% Co-Canal
 Sub=NaN(size(visgridBS(:,:,1)));
-CoCanal = "-----------------";
-CoCanal = [CoCanal ; "Co-channel interference (Mean Value)"];
-CoCanal = [CoCanal ; "-----------------"];
+CoCanal = '-----------------';
+CoCanal = [CoCanal ; 'Co-channel interference (Mean Value)'];
+CoCanal = [CoCanal ; '-----------------'];
 for i=1:length (BS(:,1))
     for j=1:length (BS(:,1))
         if(j~=i)
