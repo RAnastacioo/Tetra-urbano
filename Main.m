@@ -24,24 +24,6 @@ rasterSize = size(elevation_map);
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
 disp('------------------------------------')
 while (true)
-    disp('Choose the mode of placement of antennas between manual or automatic.')
-    str = input('Insert manual or auto -> ','s');
-    str = lower(str);
-    switch str
-        case 'manual'
-            disp('Manual mode')
-            [BS] = getpts3d(lat_map,lng_map,elevation_map);
-            break;
-        case 'auto'
-            disp('Automatic mode')
-            [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,passo,coverageTarget,f,Gtx,Grx,Ptx,altAntena,prxMin);
-            break;
-        otherwise
-            disp('It is necessary to choose the operating mode')
-    end
-end
-disp('------------------------------------')
-while (true)
     disp('Choose radio propagation model for predicting the path loss')
     disp('1 - Free Path Loss \n');
     disp('2 - Okumura/Hata \n');
@@ -88,6 +70,24 @@ while (true)
             break;
         otherwise
             disp('It is necessary to choose the model')
+    end
+end
+disp('------------------------------------')
+while (true)
+    disp('Choose the mode of placement of antennas between manual or automatic.')
+    str = input('Insert manual or auto -> ','s');
+    str = lower(str);
+    switch str
+        case 'manual'
+            disp('Manual mode')
+            [BS] = getpts3d(lat_map,lng_map,elevation_map);
+            break;
+        case 'auto'
+            disp('Automatic mode')
+            [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,passo,coverageTarget,f,Gtx,Grx,Ptx,altAntena,prxMin,model,type);
+            break;
+        otherwise
+            disp('It is necessary to choose the operating mode')
     end
 end
 disp('------------------------------------')
@@ -155,9 +155,9 @@ end
 
 %% Co-Canal
 Sub=NaN(size(visgridBS(:,:,1)));
-CoCanal = '-----------------';
-CoCanal = [CoCanal ; 'Co-channel interference (Mean Value)'];
-CoCanal = [CoCanal ; '-----------------'];
+CoCanal = "-----------------";
+CoCanal =  [CoCanal;"Co-channel interference (Mean Value)"];
+CoCanal = [CoCanal ; "-----------------"];
 for i=1:length (BS(:,1))
     for j=1:length (BS(:,1))
         if(j~=i)

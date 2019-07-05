@@ -12,7 +12,7 @@ passo=3000; %O aumento do passo reduz a resolução do estudo escolher preferencia
 load('backup_512.mat');
 plotIndividualAntenna = false;
 plotAllAntennas=true;
-
+type='A';
 %% Map Resolution
 fprintf('Map resolution = %.2fmetros \n',deg2km(distance(lat_map(11),lng_map(11),lat_map(12),lng_map(12)),'earth')*1000);
 
@@ -22,7 +22,7 @@ lonlim = [min(lng_map(:)), max(lng_map(:))];
 rasterSize = size(elevation_map);
 %GEOREFCELLS Reference raster cells to geographic coordinates
 R = georefpostings(latlim,lonlim,rasterSize,'ColumnsStartFrom','north');
-
+disp('------------------------------------')
 while (true)
     disp('Choose the mode of placement of antennas between manual or automatic.')
     str = input('Insert manual or auto -> ','s');
@@ -34,48 +34,55 @@ while (true)
             break;
         case 'auto'
             disp('Automatic mode')
-            [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,passo,coverageTarget,f,Gtx,Grx,Ptx,altAntena,prxMin);
+            [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,passo,coverageTarget,f,Gtx,Grx,Ptx,altAntena,prxMin,model,type);
             break;
         otherwise
             disp('It is necessary to choose the operating mode')
     end
 end
+disp('------------------------------------')
 while (true)
     disp('Choose radio propagation model for predicting the path loss')
     disp('1 - Free Path Loss \n');
     disp('2 - Okumura/Hata \n');
     disp('3 - IEEE 802.16d \n');
-    str = input('Insert manual or auto -> ','s');
+    str = input('Insert 1, 2 or 3 -> ','s');
     str = lower(str);
     switch str
         case '1'
             disp(' Free Path Loss')
-            
+            model=1;
             break;
         case '2'
             disp('Okumura/Hata')
-            
+            model=2;
             break;
         case '3'
+         
             disp('IEEE 802.16d')
+            model=3;
+            disp('------------------------------------')
             while (true)
                 disp('Choose the TYPE')
                 disp('A - for hilly terrain with moderate-to-heavy tree densities \n');
-                disp('B - for intermediate path \n');
-                disp('C - IEEE 802.16d \n');
+                disp('B - for intermediate path loss conditions \n');
+                disp('C - for flat terrain with light tree densities \n');
                 str = input('Insert A, B or C -> ','s');
                 str = lower(str);
                 switch str
-                    case 'manual'
-                        disp('Manual mode')
-                        [BS] = getpts3d(lat_map,lng_map,elevation_map);
+                    case 'a'
+                        disp('TYPE A')
+                        type='A';
                         break;
-                    case 'auto'
-                        disp('Automatic mode')
-                        [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,passo,coverageTarget,f,Gtx,Grx,Ptx,altAntena,prxMin);
+                    case 'b'
+                        disp('TYPE B')
+                        type='B';
                         break;
+                    case 'c'
+                        disp('TYPE C')
+                        type='C';
                     otherwise
-                        disp('It is necessary to choose the operating mode')
+                        disp('It is necessary to choose the TYPE')
                 end
             end
             break;
@@ -83,12 +90,12 @@ while (true)
             disp('It is necessary to choose the model')
     end
 end
-
+disp('------------------------------------')
 Prx_dBmBS=NaN(size(lat_map));
 visgridBS=NaN(size(lat_map));
 visgridALL=zeros(size(lat_map));
 for i=1:length (BS(:,1))
-    [Prx_dBmBS(:,:,i),visgridBS(:,:,i)] = Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R,f,Gtx,Grx,Ptx,altAntena,prxMin,plotIndividualAntenna);
+    [Prx_dBmBS(:,:,i),visgridBS(:,:,i)] = Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R,f,Gtx,Grx,Ptx,altAntena,prxMin,plotIndividualAntenna,model,type);
     visgridALL=or (visgridALL,visgridBS(:,:,i));
 end
 
@@ -129,9 +136,11 @@ surf(lng_map(1,:), lat_map(:,1), elevation_map,'DisplayName','','HandleVisibilit
 hold on
 for i=1:length (BS(:,1))
     str=['BS',num2str(i)];
-    plot3(lng_map(bestServerPixel==i),lat_map(bestServerPixel==i),elevation_map(bestServerPixel==i),'.','DisplayName',str);
+    plot3(lng_map(bestServerPixel==i),lat_map(bestServerPixel==i),elevation_map(bestServerPixel==i),'*','DisplayName',str);
 end
-legend;
+lgd=legend;
+lgd.FontSize = 14;
+lgd;
 title('BestServerPixel');
 hold off
 
@@ -147,7 +156,7 @@ end
 %% Co-Canal
 Sub=NaN(size(visgridBS(:,:,1)));
 CoCanal = "-----------------";
-CoCanal = [CoCanal ; "Co-channel interference (Mean Value)"];
+CoCanal =  [CoCanal;"Co-channel interference (Mean Value)"];
 CoCanal = [CoCanal ; "-----------------"];
 for i=1:length (BS(:,1))
     for j=1:length (BS(:,1))
