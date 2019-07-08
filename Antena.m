@@ -46,7 +46,7 @@ if(isequal(antennaType, 'dir'))
 end
 if(isequal(antennaType, 'dip'))
     %% Prx
-    Prx_dBm=Ptxdb+Gtx+Grx-LS
+    Prx_dBm=Ptxdb+Gtx+Grx-LS;
 end
 Prx_MinLogical=zeros(size(dist));
 Prx_MinLogical(Prx_dBm>prxMin)=1;

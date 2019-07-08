@@ -9,7 +9,7 @@ i=1:passo:size(lat_map(:));
 NumberAntenas=['Antennas considered for study = ',num2str(length(i))];
 MapResolution=['Map resolution = ',num2str(round((deg2km(distance(lat_map(1),lng_map(1),lat_map(2),lng_map(2)),'earth')*1000),2)),'metros'];
 AntenasResolution=['Antenna resolution = ',num2str(round((deg2km(distance(lat_map(i(1)),lng_map(i(1)),lat_map(i(2)),lng_map(i(2))),'earth')*1000),2)),'metros'];
-length(i);
+
 
 fig=figure('Name','Antenas em estudo');
 fig.WindowState = 'maximized';
