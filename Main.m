@@ -8,7 +8,7 @@ Ptx=100;%w
 altAntena=30; %metros
 prxMin=-90;
 coverageTarget=95;
-passo=1000; 
+passo=200; 
 load('backup_512.mat');
 type='A';
 antennaType='';
@@ -17,7 +17,7 @@ antennaType='';
 plotIndividualAntenna = false;
 plotAllAntennas=true;
 exportKML=true;
-CCanal=true;
+CCanal=false;
 
 %% Map Resolution
 fprintf('Map resolution = %.2fmetros \n',deg2km(distance(lat_map(11),lng_map(11),lat_map(12),lng_map(12)),'earth')*1000);
