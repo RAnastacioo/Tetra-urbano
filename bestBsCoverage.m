@@ -14,6 +14,9 @@ fig=figure('Name','Antennas considered for study');
 fig.WindowState = 'maximized';
 mesh(lng_map(1,:), lat_map(:,1), elevation_map);
 title({NumberAntenas,MapResolution,AntenasResolution});
+xlabel('Latitude (º)');
+ylabel('Longitude (º)');
+zlabel('Elevation (m)');
 hold on
 plot3(lng_map(i),lat_map(i),elevation_map(i),'r.','markersize',10);
 hold off

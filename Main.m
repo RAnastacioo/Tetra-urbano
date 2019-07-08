@@ -8,7 +8,7 @@ Ptx=100;%w
 altAntena=30; %metros
 prxMin=-90;
 coverageTarget=95;
-passo=200; 
+passo=200;
 load('backup_512.mat');
 type='A';
 antennaType='';
@@ -90,7 +90,7 @@ while (true)
     plotFrequency = 400000000;
     [efield,az,el]=pattern(antennaObject, plotFrequency);
     patternCustom(efield',(90-el),az');
-
+    
     subplot(1,2,2);
     load('Antena400MhzGain13.mat');
     title('Directive');
@@ -181,6 +181,9 @@ lgd=legend;
 lgd.FontSize = 14;
 lgd;
 title('BestServerPixel');
+xlabel('Latitude (º)');
+ylabel('Longitude (º)');
+zlabel('Elevation (m)');
 hold off
 
 %% PRX
@@ -195,27 +198,27 @@ end
 %% Co-Canal
 
 if(CCanal)
-Sub=NaN(size(visgridBS(:,:,1)));
-CoCanal = "-----------------";
-CoCanal =  [CoCanal;"Co-channel interference (Mean Value)"];
-CoCanal = [CoCanal ; "-----------------"];
-for i=1:length (BS(:,1))
-    for j=1:length (BS(:,1))
-        if(j~=i)
-            Sub=and(visgridBS(:,:,i),visgridBS(:,:,j));
-            CC=10.^((Prx_dBmBS(:,:,i))./10).*Sub;
-            II=10.^((Prx_dBmBS(:,:,j))./10).*Sub;
-            XX=CC./II;
-            CI_=XX(XX<=1);
-            %           CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
-            CI_m=round(mean(CI_,'omitnan'),2);
-            CoCanal = [CoCanal ; 'BS',num2str(i) ' with BS',num2str(j) '=',num2str(CI_m)];
-            %             fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m);
-        end
-    end
+    Sub=NaN(size(visgridBS(:,:,1)));
+    CoCanal = "-----------------";
+    CoCanal =  [CoCanal;"Co-channel interference (Mean Value)"];
     CoCanal = [CoCanal ; "-----------------"];
-end
-disp(CoCanal);
+    for i=1:length (BS(:,1))
+        for j=1:length (BS(:,1))
+            if(j~=i)
+                Sub=and(visgridBS(:,:,i),visgridBS(:,:,j));
+                CC=10.^((Prx_dBmBS(:,:,i))./10).*Sub;
+                II=10.^((Prx_dBmBS(:,:,j))./10).*Sub;
+                XX=CC./II;
+                CI_=XX(XX<=1);
+                %           CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
+                CI_m=round(mean(CI_,'omitnan'),2);
+                CoCanal = [CoCanal ; 'BS',num2str(i) ' with BS',num2str(j) '=',num2str(CI_m)];
+                %             fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m);
+            end
+        end
+        CoCanal = [CoCanal ; "-----------------"];
+    end
+    disp(CoCanal);
 end
 %% Coverage Area
 coverageTotal=logical(visgridALL);
@@ -244,8 +247,8 @@ imshow('z_Legend.jpg');
 
 %% KML file
 if(exportKML)
-exportKmlBsLocations(BS, 'BsLocations');
-BestServerPixel(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),bestServerPixel,'BestServerPixel');
-AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
-% exportKmlBsLoS(BS, 'Los');
+    exportKmlBsLocations(BS, 'BsLocations');
+    BestServerPixel(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),bestServerPixel,'BestServerPixel');
+    AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
+    % exportKmlBsLoS(BS, 'Los');
 end
