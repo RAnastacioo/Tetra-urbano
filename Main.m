@@ -7,14 +7,19 @@ Grx=1; % dB
 Ptx=100;%w
 altAntena=30; %metros
 prxMin=-90;
-coverageTarget=70;
-passo=3000; %O aumento do passo reduz a resolução do estudo escolher preferencial mente valores entre (1 e 1000)
+coverageTarget=95;
+passo=1000; 
 load('backup_512.mat');
 plotIndividualAntenna = false;
 plotAllAntennas=true;
+exportKML=true;
 type='A';
+antennaType='';
+
 %% Map Resolution
 fprintf('Map resolution = %.2fmetros \n',deg2km(distance(lat_map(11),lng_map(11),lat_map(12),lng_map(12)),'earth')*1000);
+
+fprintf('Map area = %.2fkm2 \n',deg2km(distance(lat_map(1,1),lng_map(1,1),lat_map(1,512),lng_map(1,512)),'earth')*deg2km(distance(lat_map(1,1),lng_map(1,1),lat_map(512,1),lng_map(512,1)),'earth'));
 
 %% All Line-of-sight 5isibility points in terrain
 latlim = [min(lat_map(:)), max(lat_map(:))];
@@ -40,7 +45,7 @@ while (true)
             model=2;
             break;
         case '3'
-         
+            
             disp('IEEE 802.16d')
             model=3;
             disp('------------------------------------')
@@ -74,6 +79,38 @@ while (true)
 end
 disp('------------------------------------')
 while (true)
+    
+    fig=figure('Name','Antenna Patern Atenuação 3D');
+    subplot(1,2,1);
+    title('Dipole');
+    antennaObject = design(dipole,f);
+    plotFrequency = 400000000;
+    [efield,az,el]=pattern(antennaObject, plotFrequency);
+    patternCustom(efield',(90-el),az');
+
+    subplot(1,2,2);
+    load('Antena400MhzGain13.mat');
+    title('Directive');
+    patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle);
+    
+    disp('Choose antenna model')
+    str = input('Insert dipolo(dip) or Directive Antenna(dir) -> ','s');
+    str = lower(str);
+    switch str
+        case 'dip'
+            disp('Dipolo')
+            antennaType=str;
+            break;
+        case 'dir'
+            disp('Directive Antenna')
+            antennaType=str;
+            break;
+        otherwise
+            disp('It is necessary to choose the operating mode')
+    end
+end
+disp('------------------------------------')
+while (true)
     disp('Choose the mode of placement of antennas between manual or automatic.')
     str = input('Insert manual or auto -> ','s');
     str = lower(str);
@@ -84,7 +121,7 @@ while (true)
             break;
         case 'auto'
             disp('Automatic mode')
-            [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,passo,coverageTarget,f,Gtx,Grx,Ptx,altAntena,prxMin,model,type);
+            [BS]=bestBsCoverage(elevation_map,lat_map,lng_map,R,passo,coverageTarget,f,Gtx,Grx,Ptx,altAntena,prxMin,model,type,antennaType);
             break;
         otherwise
             disp('It is necessary to choose the operating mode')
@@ -95,7 +132,7 @@ Prx_dBmBS=NaN(size(lat_map));
 visgridBS=NaN(size(lat_map));
 visgridALL=zeros(size(lat_map));
 for i=1:length (BS(:,1))
-    [Prx_dBmBS(:,:,i),visgridBS(:,:,i)] = Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R,f,Gtx,Grx,Ptx,altAntena,prxMin,plotIndividualAntenna,model,type);
+    [Prx_dBmBS(:,:,i),visgridBS(:,:,i)] = Antena(['BS',num2str(i)],['BS',num2str(i)],BS(i,:),elevation_map,lat_map,lng_map,R,f,Gtx,Grx,Ptx,altAntena,prxMin,plotIndividualAntenna,model,type,antennaType);
     visgridALL=or (visgridALL,visgridBS(:,:,i));
 end
 
@@ -123,7 +160,6 @@ if(plotAllAntennas || N>20)
         scatter3(BS(k,1),BS(k,2),BS(k,3)+altAntena,'filled','v','m','SizeData',200);
         hold off
     end
-    fig.WindowState = 'maximized';
 end
 visgridBS=logical(visgridBS);
 %% BestBSCoverage
@@ -168,7 +204,7 @@ for i=1:length (BS(:,1))
             CI_=XX(XX<=1);
             %           CI=CI_(CI_>=0);% nao tenho a certeza se metemos esta linha ou nao (meti pq dava valor negativo sem ela)
             CI_m=round(mean(CI_,'omitnan'),2);
-            CoCanal = [CoCanal ; 'BS',num2str(i) 'with BS',num2str(j) '=',num2str(CI_m)];
+            CoCanal = [CoCanal ; 'BS',num2str(i) ' with BS',num2str(j) '=',num2str(CI_m)];
             %             fprintf('BS%d c/ BS%d = %.2f \n',i,j,CI_m);
         end
     end
@@ -183,7 +219,6 @@ coverageTotal=round((max(numberOnes/length(lng_map(:)))*100));
 
 %% color devision
 signalColor=colorLegend(Prx_dBm);
-
 %% Displays the data
 fig=figure('Name','ALL BS');
 fig.WindowState = 'maximized';
@@ -202,14 +237,10 @@ hold off
 subplot(1,2,2);
 imshow('z_Legend.jpg');
 
-%% Antenna Patern Atenuação 3d
-load('Antena400MhzGain13.mat');
-fig=figure('Name','Antenna Patern Atenuação 3D');
-fig.WindowState = 'maximized';
-patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle);
-
 %% KML file
+if(exportKML)
 exportKmlBsLocations(BS, 'BsLocations');
 BestServerPixel(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),bestServerPixel,'BestServerPixel');
 AA_func(lat_map(1),lat_map(SAMPLES,SAMPLES),lng_map(1),lng_map(SAMPLES,SAMPLES),Prx_dBm,'Coverage_map');
 % exportKmlBsLoS(BS, 'Los');
+end

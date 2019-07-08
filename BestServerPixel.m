@@ -3,10 +3,7 @@ cenas=SIGNAL_COVERAGE_LEVELS;
 cenas(isnan(SIGNAL_COVERAGE_LEVELS))=0;
 RGB = label2rgb (cenas);
 imwrite(RGB,[FILE_NAME '.png'],'Alpha',cenas);
-
 % imwrite(SIGNAL_LEVEL_COVERAGE_MAP_IMAGE_TRANSPARENT,[FILE_NAME '.png'],'Alpha',TRANSPARENCY_SIGNAL_COVERAGE_LEVELS);
-
-
 %% ========================================================================
 %% Create KML file
 %% ========================================================================

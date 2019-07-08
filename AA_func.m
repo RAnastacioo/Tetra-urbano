@@ -54,8 +54,6 @@ SIGNAL_LEVEL_COVERAGE_MAP_IMAGE_TRANSPARENT(:,:,3) = SIGNAL_LEVEL_COVERAGE_MAP_I
 
 imwrite(SIGNAL_LEVEL_COVERAGE_MAP_IMAGE_TRANSPARENT,[FILE_NAME '.png'],'Alpha',TRANSPARENCY_SIGNAL_COVERAGE_LEVELS);
 
-
-
 %% ========================================================================
 %% Create KML file
 %% ========================================================================
@@ -66,7 +64,7 @@ fprintf(fid_write,'  <Folder>\n');
 fprintf(fid_write,'   <name>Signal level - %s</name>\n',FILE_NAME);
 fprintf(fid_write,'       <GroundOverlay>\n');
 fprintf(fid_write,'		<Icon>\n');
-fprintf(fid_write,'              <href>%s.png</href>\n',FILE_NAME);
+fprintf(fid_write,'              <href>%s.png</href>\n', FILE_NAME);
 fprintf(fid_write,'		</Icon>\n');
 fprintf(fid_write,'            <LatLonBox>\n');
 fprintf(fid_write,'               <north>%s</north>\n',num2str(LATITUDE_NORTH));

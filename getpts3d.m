@@ -1,5 +1,6 @@
 
 function [BScoordinates] = getpts3d(lat_map,lng_map,elevation_map)
+
 fig = figure;
 fig.WindowState = 'maximized';
 mesh(lng_map,lat_map,elevation_map);
