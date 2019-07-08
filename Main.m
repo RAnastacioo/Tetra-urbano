@@ -93,7 +93,7 @@ while (true)
     
     subplot(1,2,2);
     load('Antena400MhzGain13.mat');
-    title('Directive');
+    title('Pattern Attenuation');
     patternCustom(Antena400MhzGain13.Attenuation,Antena400MhzGain13.Vert_Angle,Antena400MhzGain13.Hor_Angle);
     
     disp('Choose antenna model')
