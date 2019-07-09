@@ -1,14 +1,14 @@
 clearvars;clc;close all;
 SAMPLES = 512;
-%%Variaveis
+%% Variaveis
 f= 400e6; %Hz
-Gtx=1; %db
+Gtx=1; %dB
 Grx=1; % dB
 Ptx=100;%w
 altAntena=30; %metros
 prxMin=-90;
 coverageTarget=95;
-passo=200;
+passo=50;
 load('backup_512.mat');
 type='A';
 antennaType='';
@@ -21,10 +21,9 @@ CCanal=false;
 
 %% Map Resolution
 fprintf('Map resolution = %.2fmetros \n',deg2km(distance(lat_map(11),lng_map(11),lat_map(12),lng_map(12)),'earth')*1000);
-
 fprintf('Map area = %.2fkm2 \n',deg2km(distance(lat_map(1,1),lng_map(1,1),lat_map(1,512),lng_map(1,512)),'earth')*deg2km(distance(lat_map(1,1),lng_map(1,1),lat_map(512,1),lng_map(512,1)),'earth'));
 
-%% All Line-of-sight 5isibility points in terrain
+%% All Line-of-sight Visibility points in terrain
 latlim = [min(lat_map(:)), max(lat_map(:))];
 lonlim = [min(lng_map(:)), max(lng_map(:))];
 rasterSize = size(elevation_map);
