@@ -20,7 +20,7 @@ function [vismap, R] = viewshed_nova(Z, R, lat1, lon1, ...
 %
 %   If R is a referencing matrix, it must be 3-by-2 and transform raster
 %   row and column indices to/from geographic coordinates according to:
-%  
+%
 %                   [lon lat] = [row col 1] * R.
 %
 %   If R is a referencing matrix, it must define a (non-rotational,
@@ -31,18 +31,18 @@ function [vismap, R] = viewshed_nova(Z, R, lat1, lon1, ...
 %   elevation grid. If the observer is located outside the grid, there
 %   is insufficient information to calculate a viewshed.  In this case
 %   VIEWSHED issues a warning and sets all elements of VIS to zero.
-% 
+%
 %   VIEWSHED(Z, R, LAT, LON, observerAltitude) places the observer at
 %   the specified altitude in meters above the surface. This is
 %   equivalent to putting the observer on a tower. If omitted, the
 %   observer is assumed to be on the surface.
-% 
+%
 %   VIEWSHED(Z, R, LAT, LON, observerAltitude, targetAltitude) checks
 %   for visibility of target points a specified distance above the
 %   terrain. This is equivalent to putting the target points on towers,
 %   but the towers do not obstruct the view. if omitted, the target
 %   points are assumed to be on the surface.
-% 
+%
 %   VIEWSHED(Z, R, LAT, LON, observerAltitude, targetAltitude, ...
 %     observerAltitudeOption) controls whether the observer is at a
 %   relative or absolute altitude. If observerAltitudeOption is 'AGL',
@@ -50,7 +50,7 @@ function [vismap, R] = viewshed_nova(Z, R, lat1, lon1, ...
 %   observerAltitudeOption is 'MSL', observerAltitude is interpreted as
 %   altitude above zero, or mean sea level. If omitted, 'AGL' is
 %   assumed.
-% 
+%
 %   VIEWSHED(Z, R, LAT, LON, observerAltitude, targetAltitude, ...
 %      observerAltitudeOption, targetAltitudeOptionOption) controls
 %   whether the target points are at a relative or absolute altitude. If
@@ -58,7 +58,7 @@ function [vismap, R] = viewshed_nova(Z, R, lat1, lon1, ...
 %   meters above ground level. If targetAltitudeOption is 'MSL', then
 %   targetAltitude is interpreted as altitude above zero, or mean sea
 %   level. If omitted, 'AGL' is assumed.
-% 
+%
 %   VIEWSHED(Z, R, LAT, LON, observerAltitude, targetAltitude, ...
 %      observerAltitudeOption, targetAltitudeOption, actualRadius)
 %   does the visibility calculation on a sphere with the specified
@@ -66,7 +66,7 @@ function [vismap, R] = viewshed_nova(Z, R, lat1, lon1, ...
 %   The altitudes, elevations and the radius should be in the same
 %   units. This calling form is most useful for computations on bodies
 %   other than the earth.
-% 
+%
 %   VIEWSHED(Z, R, LAT, LON, observerAltitude, targetAltitude, ...
 %      observerAltitudeOption, targetAltitudeOption, actualRadius, ...
 %      effectiveRadius) assumes a larger radius for propagation of the
@@ -76,18 +76,18 @@ function [vismap, R] = viewshed_nova(Z, R, lat1, lon1, ...
 %   on a sphere with 4/3rds the radius of the earth. In that case the
 %   last two arguments would be R_e and 4/3*R_e, where R_e is the radius
 %   of the earth. Use Inf for flat earth viewshed calculations. The
-%   altitudes, elevations and the radii should be in the same units. 
-% 
+%   altitudes, elevations and the radii should be in the same units.
+%
 %   Example
 %   -------
 %    Z = 500*peaks(100);
 %    refvec = [ 1000 0 0];
 %    [lat1,lon1,lat2,lon2]=deal(-0.027,0.05,-0.093,0.042);
-%    
+%
 %    [visgrid,visleg] = viewshed(Z,refvec,lat1,lon1,100);
 %    [vis,visprofile,dist,zi,lattrk,lontrk] ...
 %        = los2(Z,refvec,lat1,lon1,lat2,lon2,100);
-%  
+%
 %    axesm('globe','geoid',earthRadius('meters'))
 %    meshm(visgrid,visleg,size(Z),Z); axis tight
 %    camposm(-10,-10,1e6); camupm(0,0)
@@ -95,7 +95,7 @@ function [vismap, R] = viewshed_nova(Z, R, lat1, lon1, ...
 %    shading interp; camlight
 %    h = lcolorbar({'obscured','visible'});
 %    set(h,'Position',[.875 .45 .02 .1])
-%  
+%
 %    plot3m(lattrk([1;end]),lontrk([1; end]),zi([1; end])+[100; 0],'r','linewidth',2)
 %    plotm(lattrk(~visprofile),lontrk(~visprofile),zi(~visprofile),'r.','markersize',10)
 %    plotm(lattrk(visprofile),lontrk(visprofile),zi(visprofile),'g.','markersize',10)
@@ -123,7 +123,7 @@ if nargin < 5; oalt = 10*eps; end % observer on the surface
 if nargin < 6; talt = 0; end % look at terrain, not above it
 if nargin < 7; oaltopt = 'AGL'; end % observer altitude above ground level
 if nargin < 8; taltopt = 'AGL'; end % target above ground level
-if nargin < 9; actualradius = earthRadius; end 
+if nargin < 9; actualradius = earthRadius; end
 if nargin < 10; apparentradius = actualradius; end % use Inf for flat earth LOS calculations
 
 validateattributes(lat1,{'double','single'} ,{'real','finite','scalar'},'viewshed','lat1',3)
@@ -154,7 +154,7 @@ vismap = NaN(nr,nc);
 if ~ingeoquad(lat1, lon1, R.LatitudeLimits, R.LongitudeLimits)
     warning('map:viewshed:observerOutsideGrid', ...
         ['The observer is located outside the terrain grid;\n' ...
-         'visibility will be set to 0 (false) for all grid cells'])
+        'visibility will be set to 0 (false) for all grid cells'])
 end
 
 x2 = [ones(1,nr-2) nc+zeros(1,nr-2)    (1:nc)          (1:nc)    ];
@@ -164,8 +164,8 @@ lat2 = intrinsicYToLatitude(R, y2);
 lon2 = intrinsicXToLongitude(R, x2);
 
 [visprofile,~,~,lat,lon,~,~,~,~,npts] = calculateLOS_nova(F,R,lat1,lon1,lat2,lon2,oalt,talt,...
-   observerAltitudeIsAGL,targetAltitudeIsAGL,actualradius,apparentradius);
-for k = 1:numel(lat2) 
+    observerAltitudeIsAGL,targetAltitudeIsAGL,actualradius,apparentradius);
+for k = 1:numel(lat2)
     vismap = embed(lat(1:npts(k), k),lon(1:npts(k), k),visprofile(1:npts(k), k),vismap, R);
 end
 
@@ -182,7 +182,7 @@ vis = false(size(row));
 
 [visprofile,~,~,~,~,~,~,~,~,npts] = calculateLOS_nova(F,R,lat1,lon1,lat2,lon2,oalt,talt,...
     observerAltitudeIsAGL,targetAltitudeIsAGL,actualradius,apparentradius);
-for k = 1:numel(lat2) 
+for k = 1:numel(lat2)
     vis(k) = visprofile(npts(k), k);
 end
 
@@ -227,7 +227,7 @@ xIntrinsicLimits = R.XIntrinsicLimits;
 yIntrinsicLimits = R.YIntrinsicLimits;
 
 qOutside = (xi < xIntrinsicLimits(1)) | (xIntrinsicLimits(2) < xi) ...
-         | (yi < yIntrinsicLimits(1)) | (yIntrinsicLimits(2) < yi);
+    | (yi < yIntrinsicLimits(1)) | (yIntrinsicLimits(2) < yi);
 
 c = min(round(xi), R.RasterSize(2));
 r = min(round(yi), R.RasterSize(1));

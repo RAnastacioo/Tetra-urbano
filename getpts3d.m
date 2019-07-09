@@ -14,8 +14,8 @@ cursorobj = datacursormode(fig);
 cursorobj.SnapToDataVertex = 'on'; % Snap to our plotted data, on by default
 
 disp('Click display to create a data tip, press shift+mouseleft for any points, then press "Return"')
-while ~waitforbuttonpress 
-  keydown= waitforbuttonpress;
+while ~waitforbuttonpress
+    keydown= waitforbuttonpress;
     % waitforbuttonpress returns 0 with click, 1 with key press
     % Does not trigger on ctrl, shift, alt, caps lock, num lock, or scroll lock
     cursorobj.Enable = 'on'; % Turn on the data cursor, hold alt to select multiple points

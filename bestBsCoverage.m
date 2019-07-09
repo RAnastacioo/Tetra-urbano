@@ -37,7 +37,7 @@ catch
         visgrid(:,:)=logical(viewshed(elevation_map,R,lat_map(j),lng_map(j),altAntena,1));
         % dist
         dist(:,:)=deg2km(distance(lat_map(j),lng_map(j),lat_map,lng_map),'earth');
-        LS=NaN(size(dist));        
+        LS=NaN(size(dist));
         if model==1
             LS(visgrid(:,:))=PL_free(f,dist(visgrid(:,:)),Gtx,Grx);
         end
@@ -47,26 +47,34 @@ catch
         if model==3
             LS(visgrid(:,:))=PL_IEEE80216d(f,dist(visgrid(:,:)).*1000,type,elevation_map(j)+altAntena,elevation_map(visgrid(:,:)),'Okumura','MOD');
         end
-        
+        if(isequal(antennaType, 'omni'))
+            %% Prx
+            Prx_dBm(:,:)=Ptxdb+Gtx+Grx-LS;
+        end
         if(isequal(antennaType, 'dir'))
-        %% getdirectivityAntenna
-        [row,col]=find(lat_map==lat_map(j) & lng_map==lng_map(j) & elevation_map==elevation_map(j));
-        [directivityAngle]=getdirectivityAntenna(visgrid,row,col);
-        % 3D pattern antena
-        %Angle azimuth(lat1,lon1,lat2,lon2)
-        [az,elev,~] = geodetic2aer(lat_map,lng_map,elevation_map,lat_map(j),lng_map(j),(elevation_map(j)+altAntena),wgs84Ellipsoid);
-        az1 = mod(round(az+directivityAngle), 359);
-        elev1 = round(-elev + 90);
-        % az=round(az);
-        % elev= round(abs(elev-90));
-        at = reshape(Antena400MhzGain13.Attenuation, 360, [])';
-        Gtx1 = at(elev1 + az1.*181);
-        % Prx
-        Prx_dBm(:,:)=Ptxdb+Gtx+Gtx1+Grx-LS;
+            %% getdirectivityAntenna
+            [row,col]=find(lat_map==lat_map(j) & lng_map==lng_map(j) & elevation_map==elevation_map(j));
+            [directivityAngle]=getdirectivityAntenna(visgrid,row,col);
+            % 3D pattern antena
+            %Angle azimuth(lat1,lon1,lat2,lon2)
+            [az,elev,~] = geodetic2aer(lat_map,lng_map,elevation_map,lat_map(j),lng_map(j),(elevation_map(j)+altAntena),wgs84Ellipsoid);
+            az1 = mod(round(az+directivityAngle), 359);
+            elev1 = round(-elev + 90);
+            % az=round(az);
+            % elev= round(abs(elev-90));
+            at = reshape(Antena400MhzGain13.Attenuation, 360, [])';
+            Gtx1 = at(elev1 + az1.*181);
+            % Prx
+            Prx_dBm(:,:)=Ptxdb+Gtx+Gtx1+Grx-LS;
         end
         if(isequal(antennaType, 'dip'))
-         % Prx
-        Prx_dBm(:,:)=Ptxdb+Gtx+Grx-LS;
+            % Prx
+            load('dipolo.mat')
+            [az,elev,~] = geodetic2aer(lat_map,lng_map,elevation_map,lat_map(j),lng_map(j),(elevation_map(j)+altAntena),wgs84Ellipsoid);
+            az1 = mod(round(az), 359);
+            elev1 = round(-elev + 90);
+            Gtx1 = dipolo(elev1 + az1.*181);
+            Prx_dBm(:,:)=Ptxdb+Gtx+Gtx1+Grx-LS;
         end
         %Prx_Min
         Prx_MinLogical=zeros(size(dist));

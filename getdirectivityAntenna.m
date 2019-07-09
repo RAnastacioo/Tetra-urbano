@@ -1,5 +1,5 @@
 function [directivityAngle]=getdirectivityAntenna(visgrid,row,col)
-    
+
 %getdirectivityAntenna
 [rows columns numberOfColorBands] = size(visgrid);
 croppedMatrixquadrant1 = visgrid(1:row, col:columns);

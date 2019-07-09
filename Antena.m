@@ -1,6 +1,4 @@
 function [Prx_dBmwithPrMin,visgridwithPrMin] = Antena(FigName,Title,BSpoint,elevation_map,lat_map,lng_map,R,f,Gtx,Grx,Ptx,altAntena,prxMin,plotIndividualAntenna,model,type,antennaType)
-Gt=1;
-Gr=1;
 PointLong=BSpoint(1,1);
 PointLat=BSpoint(1,2);
 PointAlt=BSpoint(1,3);
@@ -17,7 +15,7 @@ dist=sqrt(abs((PointAlt-dist)).^2+(dist.*1000).^2)/1000;
 %% MODEL "LFS"
 LS=NaN(size(dist));
 if model==1
-    LS(visgrid)=PL_free(f,dist(visgrid),Gt,Gr);
+    LS(visgrid)=PL_free(f,dist(visgrid),Gtx,Grx);
 end
 if model==2
     LS(visgrid)=PL_Hata_modify(f,dist(visgrid).*1000,PointAlt+altAntena,elevation_map(visgrid),'URBAN');
@@ -26,6 +24,10 @@ if model==3
     LS(visgrid)=PL_IEEE80216d(f,dist(visgrid).*1000,type,PointAlt+altAntena,elevation_map(visgrid),'Okumura','MOD');
 end
 
+if(isequal(antennaType, 'omni'))
+    %% Prx
+    Prx_dBm=Ptxdb+Gtx+Grx-LS;
+end
 if(isequal(antennaType, 'dir'))
     %% getdirectivityAntenna
     [row,col]=find(lat_map==PointLat & lng_map==PointLong & elevation_map==PointAlt);
@@ -45,8 +47,13 @@ if(isequal(antennaType, 'dir'))
     Prx_dBm=Ptxdb+Gtx+Gtx1+Grx-LS;
 end
 if(isequal(antennaType, 'dip'))
+    load('dipolo.mat')
+    [az,elev,~] = geodetic2aer(lat_map,lng_map,elevation_map,PointLat,PointLong,(PointAlt+altAntena),wgs84Ellipsoid);
+    az1 = mod(round(az), 359);
+    elev1 = round(-elev + 90);
+    Gtx1 = dipolo(elev1 + az1.*181);
     %% Prx
-    Prx_dBm=Ptxdb+Gtx+Grx-LS;
+    Prx_dBm=Ptxdb+Gtx+Gtx1+Grx-LS;
 end
 Prx_MinLogical=zeros(size(dist));
 Prx_MinLogical(Prx_dBm>prxMin)=1;

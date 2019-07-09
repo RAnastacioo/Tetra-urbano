@@ -4,21 +4,21 @@ SIGNAL_LEVEL_COVERAGE_MAP_IMAGE_R = uint8(zeros(length(SIGNAL_COVERAGE_LEVELS(:,
 SIGNAL_LEVEL_COVERAGE_MAP_IMAGE_G = uint8(zeros(length(SIGNAL_COVERAGE_LEVELS(:,1)), length(SIGNAL_COVERAGE_LEVELS(1,:))));
 SIGNAL_LEVEL_COVERAGE_MAP_IMAGE_B = uint8(zeros(length(SIGNAL_COVERAGE_LEVELS(:,1)), length(SIGNAL_COVERAGE_LEVELS(1,:))));
 Signal_levels_and_colors = [1e9     -10     254 000 000
-                            -10     -20     255 127 000
-                            -20     -30     254 165 000
-                             -30     -40    254 206 000
-                            -40     -50     255 255 000
-                            -50     -60     184 255 000
-                            -60     -70     000 255 001
-                            -70     -80     000 208 000
-                            -80     -90     000 197 194
-                            -90     -100    000 148 254
-                            -100    -110    080 080 254
-                            -110    -120    000 038 255
-                            -120    -130    143 063 255
-                            -130    -140    196 053 255
-                            -140    -150    254 001 252
-                            -150    -200    255 193 204];
+    -10     -20     255 127 000
+    -20     -30     254 165 000
+    -30     -40    254 206 000
+    -40     -50     255 255 000
+    -50     -60     184 255 000
+    -60     -70     000 255 001
+    -70     -80     000 208 000
+    -80     -90     000 197 194
+    -90     -100    000 148 254
+    -100    -110    080 080 254
+    -110    -120    000 038 255
+    -120    -130    143 063 255
+    -130    -140    196 053 255
+    -140    -150    254 001 252
+    -150    -200    255 193 204];
 for LEVEL_index = 1 : length(Signal_levels_and_colors(:,1))
     LEVEL_MAX = Signal_levels_and_colors(LEVEL_index,1);
     LEVEL_MIN = Signal_levels_and_colors(LEVEL_index,2);
